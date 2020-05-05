@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 public class GiftIdeaAndStatus {
     private GiftIdea idea;
     private boolean claimed;
+    private Person claimedBy;
 
     public GiftIdeaAndStatus(GiftIdea idea) {
         this.idea = idea;

@@ -1,7 +1,10 @@
 package io.joshatron.holiday.core;
 
+import io.joshatron.holiday.core.exception.PersonOperationException;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class Person {
@@ -24,17 +27,28 @@ public class Person {
     }
 
     public void removeFromWishList(GiftIdea idea) {
-        wishList.remove(getMatchingItem(idea));
+        wishList.remove(findTheirItemInWishList(idea));
     }
 
     public void claimGiftIdea(Person person, GiftIdea ideaToClaim) {
-        GiftIdeaAndStatus matching = getMatchingItem(ideaToClaim);
+        GiftIdeaAndStatus matching = findTheirItemInWishList(ideaToClaim);
+        if (matching.isClaimed()) {
+            throw new PersonOperationException();
+        }
+
         matching.setClaimed(true);
+        matching.setClaimedBy(person);
     }
 
-    private GiftIdeaAndStatus getMatchingItem(GiftIdea idea) {
-        return wishList.stream()
+    public GiftIdeaAndStatus findTheirItemInWishList(GiftIdea idea) {
+        Optional<GiftIdeaAndStatus> matching = wishList.stream()
                 .filter(g -> g.getIdea().equals(idea))
-                .findFirst().get();
+                .findFirst();
+
+        if(!matching.isPresent()) {
+            throw new PersonOperationException();
+        }
+
+        return matching.get();
     }
 }
