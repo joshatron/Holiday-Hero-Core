@@ -5,11 +5,18 @@ import lombok.Data;
 @Data
 public class GiftIdeaAndStatus {
     private GiftIdea idea;
-    private boolean claimed;
     private Person claimedBy;
 
     public GiftIdeaAndStatus(GiftIdea idea) {
         this.idea = idea;
-        this.claimed = false;
+        this.claimedBy = null;
+    }
+
+    public boolean isClaimed() {
+        return claimedBy != null;
+    }
+
+    public void removeClaim() {
+        claimedBy = null;
     }
 }

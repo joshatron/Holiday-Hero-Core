@@ -10,12 +10,14 @@ import java.util.stream.Collectors;
 
 public class Person {
     private List<GiftIdeaAndStatus> wishList;
+    private List<GiftIdeaAndStatus> proposedList;
 
     public Person() {
         wishList = new ArrayList<>();
+        proposedList = new ArrayList<>();
     }
 
-    public void addToWishList(GiftIdea idea) {
+    public void addIdeaToWishList(GiftIdea idea) {
         wishList.add(new GiftIdeaAndStatus(idea));
     }
 
@@ -27,32 +29,31 @@ public class Person {
         return wishList;
     }
 
-    public void removeFromWishList(GiftIdea idea) {
-        if(anyItemClaimed()) {
+    public void removeIdeaFromWishList(GiftIdea idea) {
+        if(anyItemClaimedInWishlist()) {
             throw new PersonOperationException(PersonOperationExceptionReason.CLAIMING_STARTED);
         }
-        wishList.remove(findTheirItemInWishList(idea));
+        wishList.remove(findTheirItemInWishlist(idea));
     }
 
-    private boolean anyItemClaimed() {
+    private boolean anyItemClaimedInWishlist() {
         return wishList.stream().anyMatch(GiftIdeaAndStatus::isClaimed);
     }
 
-    public void claimGiftIdea(Person person, GiftIdea ideaToClaim) {
+    public void claimGiftIdeaInWishlist(Person person, GiftIdea ideaToClaim) {
         if(person.equals(this)) {
             throw new PersonOperationException(PersonOperationExceptionReason.CANT_CLAIM_OWN);
         }
 
-        GiftIdeaAndStatus matching = findTheirItemInWishList(ideaToClaim);
+        GiftIdeaAndStatus matching = findTheirItemInWishlist(ideaToClaim);
         if (matching.isClaimed()) {
             throw new PersonOperationException(PersonOperationExceptionReason.ALREADY_CLAIMED);
         }
 
-        matching.setClaimed(true);
         matching.setClaimedBy(person);
     }
 
-    public GiftIdeaAndStatus findTheirItemInWishList(GiftIdea idea) {
+    public GiftIdeaAndStatus findTheirItemInWishlist(GiftIdea idea) {
         Optional<GiftIdeaAndStatus> matching = wishList.stream()
                 .filter(g -> g.getIdea().equals(idea))
                 .findFirst();
@@ -62,5 +63,22 @@ public class Person {
         }
 
         return matching.get();
+    }
+
+    public void removeClaimFromWishlist(GiftIdea idea) {
+        findTheirItemInWishlist(idea).removeClaim();
+    }
+
+    public boolean wishlistContainsIdea(GiftIdea idea) {
+        return wishList.stream().anyMatch(i -> i.getIdea().equals(idea));
+    }
+
+    public void rolloverWishlist() {
+        proposedList = wishList.stream().filter(GiftIdeaAndStatus::isClaimed).collect(Collectors.toList());
+        wishList = wishList.stream().filter(idea -> !idea.isClaimed()).collect(Collectors.toList());
+    }
+
+    public boolean proposedListContainsIdea(GiftIdea idea) {
+        return proposedList.stream().anyMatch(i -> i.getIdea().equals(idea));
     }
 }
