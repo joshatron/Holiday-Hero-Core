@@ -11,10 +11,12 @@ import java.util.stream.Collectors;
 public class Person {
     private List<GiftIdeaAndStatus> wishList;
     private List<GiftIdeaAndStatus> proposedList;
+    private List<GiftIdeaAndStatus> receivedList;
 
     public Person() {
         wishList = new ArrayList<>();
         proposedList = new ArrayList<>();
+        receivedList = new ArrayList<>();
     }
 
     public void addIdeaToWishList(GiftIdea idea) {
@@ -80,5 +82,19 @@ public class Person {
 
     public boolean proposedListContainsIdea(GiftIdea idea) {
         return proposedList.stream().anyMatch(i -> i.getIdea().equals(idea));
+    }
+
+    public List<GiftIdeaAndStatus> getMyProposedList() {
+        return proposedList;
+    }
+
+    public void acceptIdea(GiftIdea idea) {
+        GiftIdeaAndStatus item = proposedList.stream().filter(i -> i.getIdea().equals(idea)).findFirst().get();
+        receivedList.add(item);
+        proposedList = proposedList.stream().filter(i -> !i.getIdea().equals(idea)).collect(Collectors.toList());
+    }
+
+    public boolean receivedListContainsIdea(GiftIdea idea) {
+        return receivedList.stream().anyMatch(i -> i.getIdea().equals(idea));
     }
 }
