@@ -266,6 +266,20 @@ public class WishListTest {
         Assert.assertFalse(person.receivedListContainsIdea(ideaNotAccepted), "Unaccepted item should not be in received items.");
     }
 
+    @Test
+    public void denyGiftFromProposedList() {
+        Person person = createPersonWith2IdeaWishlist2IdeaProposedList();
+        GiftIdea ideaDenied = person.getMyProposedList().get(1).getIdea();
+        GiftIdea ideaNotDenied = person.getMyProposedList().get(0).getIdea();
+        person.denyIdea(ideaDenied);
+
+        Assert.assertFalse(person.proposedListContainsIdea(ideaDenied), "Denied item should no longer be in proposed list.");
+        Assert.assertTrue(person.proposedListContainsIdea(ideaNotDenied), "Undenied item should still be in proposed list.");
+
+        Assert.assertTrue(person.wishlistContainsIdea(ideaDenied), "Denied item should be in wishlist.");
+        Assert.assertFalse(person.findTheirItemInWishlist(ideaDenied).isClaimed());
+    }
+
     private Person createPersonWith2IdeaWishlist() {
         Person person = new Person();
         GiftIdea idea1 = new GiftIdea();

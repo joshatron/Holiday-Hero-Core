@@ -97,4 +97,10 @@ public class Person {
     public boolean receivedListContainsIdea(GiftIdea idea) {
         return receivedList.stream().anyMatch(i -> i.getIdea().equals(idea));
     }
+
+    public void denyIdea(GiftIdea idea) {
+        GiftIdeaAndStatus item = proposedList.stream().filter(i -> i.getIdea().equals(idea)).findFirst().get();
+        wishList.add(new GiftIdeaAndStatus(item.getIdea()));
+        proposedList = proposedList.stream().filter(i -> !i.getIdea().equals(idea)).collect(Collectors.toList());
+    }
 }
