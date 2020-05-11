@@ -88,8 +88,8 @@ public class WishListTest {
     @Test
     public void checkIfYouClaimed() {
         Person person1 = createPersonWith2IdeaWishlist();
-        Person person2 = new Person();
-        Person person3 = new Person();
+        Person person2 = new Person("2");
+        Person person3 = new Person("3");
         GiftIdea ideaToClaim = person1.getMyWishList().get(0);
         person1.claimGiftIdeaInWishlist(person3, ideaToClaim);
 

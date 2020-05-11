@@ -2,13 +2,16 @@ package io.joshatron.holiday.core;
 
 import io.joshatron.holiday.core.exception.PersonOperationException;
 import io.joshatron.holiday.core.exception.PersonOperationExceptionReason;
+import lombok.EqualsAndHashCode;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@EqualsAndHashCode
 public class Person {
+    private String id;
     private List<GiftIdeaAndStatus> wishList;
     private List<GiftIdeaAndStatus> proposedList;
     private List<GiftIdeaAndStatus> receivedList;
@@ -17,6 +20,15 @@ public class Person {
         wishList = new ArrayList<>();
         proposedList = new ArrayList<>();
         receivedList = new ArrayList<>();
+    }
+
+    public Person(String id) {
+        this();
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public void addIdeaToWishList(GiftIdea idea) {
