@@ -16,4 +16,8 @@ public class PersonNetwork {
     public Person findPerson(String personId) {
         return store.find(personId);
     }
+
+    public boolean hasPerson(String personId) {
+        return store.contains(personId);
+    }
 }

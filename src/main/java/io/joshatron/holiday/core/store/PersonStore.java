@@ -5,4 +5,5 @@ import io.joshatron.holiday.core.Person;
 public interface PersonStore {
     void add(Person person);
     Person find(String personId);
+    boolean contains(String personId);
 }
