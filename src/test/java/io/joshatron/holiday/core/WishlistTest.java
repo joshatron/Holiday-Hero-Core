@@ -5,17 +5,20 @@ import io.joshatron.holiday.core.exception.PersonOperationExceptionReason;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public class WishListTest {
+import java.util.UUID;
+
+public class WishlistTest {
 
     @Test
     public void addOneGiftIdea() {
-        Person person = new Person();
+        String person = randomId();
+        Wishlist wishlist = new Wishlist(randomId(), person);
         GiftIdea idea = new GiftIdea();
         idea.setName("Raspberry Pi");
-        person.addIdeaToWishList(idea);
+        wishlist.addIdea(idea);
 
-        Assert.assertEquals(person.getMyWishList().size(), 1, "Should only have 1 item in it.");
-        Assert.assertEquals(person.getMyWishList().get(0), idea, "Should contain the item passed.");
+        Assert.assertEquals(wishlist.getWishlist(person).size(), 1, "Should only have 1 item in it.");
+        Assert.assertEquals(wishlist.getWishlist(person).get(0), idea, "Should contain the item passed.");
     }
 
     @Test
@@ -306,5 +309,9 @@ public class WishListTest {
         person.rolloverWishlist();
 
         return person;
+    }
+
+    private String randomId() {
+        return UUID.randomUUID().toString();
     }
 }

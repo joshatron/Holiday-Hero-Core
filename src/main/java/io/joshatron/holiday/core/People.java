@@ -2,10 +2,10 @@ package io.joshatron.holiday.core;
 
 import io.joshatron.holiday.core.store.PersonStore;
 
-public class PersonNetwork {
+public class People {
     PersonStore store;
 
-    public PersonNetwork(PersonStore store) {
+    public People(PersonStore store) {
         this.store = store;
     }
 

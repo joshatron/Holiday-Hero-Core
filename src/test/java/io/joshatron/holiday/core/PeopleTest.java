@@ -6,12 +6,14 @@ import io.joshatron.holiday.core.store.SimplePersonStore;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public class PersonNetworkTest {
+import java.util.UUID;
+
+public class PeopleTest {
 
     @Test
     public void addOnePersonToNetwork() {
-        PersonNetwork network = new PersonNetwork(new SimplePersonStore());
-        Person toAdd = new Person("1");
+        People network = new People(new SimplePersonStore());
+        Person toAdd = new Person(randomId());
         network.addPerson(toAdd);
 
         Assert.assertEquals(network.findPerson(toAdd.getId()), toAdd, "Person should be added.");
@@ -19,9 +21,9 @@ public class PersonNetworkTest {
 
     @Test
     public void addMultiplePeopleToNetwork() {
-        PersonNetwork network = new PersonNetwork(new SimplePersonStore());
-        Person firstAdd = new Person("1");
-        Person secondAdd = new Person("2");
+        People network = new People(new SimplePersonStore());
+        Person firstAdd = new Person(randomId());
+        Person secondAdd = new Person(randomId());
         network.addPerson(firstAdd);
         network.addPerson(secondAdd);
 
@@ -31,12 +33,12 @@ public class PersonNetworkTest {
 
     @Test
     public void findNonexistantUserInNetwork() {
-        PersonNetwork network = new PersonNetwork(new SimplePersonStore());
-        Person person = new Person("1");
+        People network = new People(new SimplePersonStore());
+        Person person = new Person(randomId());
         network.addPerson(person);
 
         try {
-            network.findPerson("2");
+            network.findPerson(randomId());
             Assert.fail("Should have thrown an exception.");
         } catch (PersonOperationException e) {
             Assert.assertEquals(e.getReason(), PersonOperationExceptionReason.PERSON_NOT_FOUND);
@@ -47,11 +49,15 @@ public class PersonNetworkTest {
 
     @Test
     public void checkIfUserPresent() {
-        PersonNetwork network = new PersonNetwork(new SimplePersonStore());
-        Person person = new Person("1");
+        People network = new People(new SimplePersonStore());
+        Person person = new Person(randomId());
 
         Assert.assertFalse(network.hasPerson(person.getId()));
         network.addPerson(person);
         Assert.assertTrue(network.hasPerson(person.getId()));
+    }
+
+    private String randomId() {
+        return UUID.randomUUID().toString();
     }
 }
