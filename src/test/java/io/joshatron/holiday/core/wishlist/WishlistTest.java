@@ -1,7 +1,11 @@
-package io.joshatron.holiday.core;
+package io.joshatron.holiday.core.wishlist;
 
+import io.joshatron.holiday.core.GiftIdea;
+import io.joshatron.holiday.core.Person;
 import io.joshatron.holiday.core.exception.PersonOperationException;
 import io.joshatron.holiday.core.exception.PersonOperationExceptionReason;
+import io.joshatron.holiday.core.wishlist.exception.WishlistException;
+import io.joshatron.holiday.core.wishlist.exception.WishlistExceptionReason;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -13,61 +17,63 @@ public class WishlistTest {
     public void addOneGiftIdea() {
         String person = randomId();
         Wishlist wishlist = new Wishlist(randomId(), person);
-        GiftIdea idea = new GiftIdea();
+        GiftIdea idea = new GiftIdea(randomId());
         idea.setName("Raspberry Pi");
         wishlist.addIdea(idea);
 
-        Assert.assertEquals(wishlist.getWishlist(person).size(), 1, "Should only have 1 item in it.");
-        Assert.assertEquals(wishlist.getWishlist(person).get(0), idea, "Should contain the item passed.");
+        Assert.assertEquals(wishlist.getWishlist().size(), 1, "Should only have 1 item in it.");
+        Assert.assertEquals(wishlist.getWishlist().get(0), idea, "Should contain the item passed.");
     }
 
     @Test
     public void addMultipleGiftIdeas() {
-        Person person = new Person();
-        GiftIdea idea1 = new GiftIdea();
+        String person = randomId();
+        Wishlist wishlist = new Wishlist(randomId(), person);
+        GiftIdea idea1 = new GiftIdea(randomId());
         idea1.setName("Raspberry Pi");
-        person.addIdeaToWishList(idea1);
-        GiftIdea idea2 = new GiftIdea();
+        wishlist.addIdea(idea1);
+        GiftIdea idea2 = new GiftIdea(randomId());
         idea2.setName("Arduino");
-        person.addIdeaToWishList(idea2);
+        wishlist.addIdea(idea2);
 
-        Assert.assertEquals(person.getMyWishList().size(), 2, "Should contain 2 items in it.");
-        Assert.assertTrue(person.wishlistContainsIdea(idea1), "One element should be the first item added.");
-        Assert.assertTrue(person.wishlistContainsIdea(idea2), "One element should be the second item added.");
+        Assert.assertEquals(wishlist.getWishlist().size(), 2, "Should contain 2 items in it.");
+        Assert.assertTrue(wishlist.wishlistContainsIdea(idea1), "One element should be the first item added.");
+        Assert.assertTrue(wishlist.wishlistContainsIdea(idea2), "One element should be the second item added.");
+        Assert.assertFalse(wishlist.wishlistContainsIdea(new GiftIdea(randomId())), "One element should be the second item added.");
     }
 
     @Test
-    public void removeGiftIdeaByObject() {
-        Person person = createPersonWith2IdeaWishlist();
-        GiftIdea ideaToRemove = person.getMyWishList().get(0);
-        GiftIdea ideaToKeep = person.getMyWishList().get(1);
+    public void removeGiftIdea() {
+        Wishlist wishlist = create2ItemWishlist();
+        GiftIdea ideaToRemove = wishlist.getWishlist().get(0);
+        GiftIdea ideaToKeep = wishlist.getWishlist().get(1);
 
-        person.removeIdeaFromWishList(ideaToRemove);
+        wishlist.removeIdea(ideaToRemove.getId());
 
-        Assert.assertEquals(person.getMyWishList().size(), 1, "Should only have one item left in it.");
-        Assert.assertFalse(person.wishlistContainsIdea(ideaToRemove), "Should not contain the removed item.");
-        Assert.assertTrue(person.wishlistContainsIdea(ideaToKeep), "Should contain the kept item.");
+        Assert.assertEquals(wishlist.getWishlist().size(), 1, "Should only have one item left in it.");
+        Assert.assertFalse(wishlist.wishlistContainsIdea(ideaToRemove), "Should not contain the removed item.");
+        Assert.assertTrue(wishlist.wishlistContainsIdea(ideaToKeep), "Should contain the kept item.");
     }
 
     @Test
-    public void findGiftIdeaByObject() {
-        Person person = createPersonWith2IdeaWishlist();
-        GiftIdea ideaInList = person.getMyWishList().get(1);
+    public void findGiftIdea() {
+        Wishlist wishlist = create2ItemWishlist();
+        GiftIdea ideaInList = wishlist.getWishlist().get(1);
 
-        GiftIdeaAndStatus found = person.findTheirItemInWishlist(ideaInList);
-        Assert.assertEquals(found.getIdea(), ideaInList, "The found idea and one to find should match.");
+        GiftIdea found = wishlist.findIdea(ideaInList.getId());
+        Assert.assertEquals(found, ideaInList, "The found idea and one to find should match.");
     }
 
     @Test
-    public void cantFindGiftIdeaByObject() {
-        Person person = createPersonWith2IdeaWishlist();
-        GiftIdea ideaNotInList = new GiftIdea();
+    public void cantFindGiftIdea() {
+        Wishlist wishlist = create2ItemWishlist();
+        GiftIdea ideaNotInList = new GiftIdea(randomId());
 
         try {
-            person.findTheirItemInWishlist(ideaNotInList);
+            wishlist.findIdea(ideaNotInList.getId());
             Assert.fail("Should have thrown exception since not in list.");
-        } catch (PersonOperationException e) {
-            Assert.assertEquals(e.getReason(), PersonOperationExceptionReason.IDEA_NOT_FOUND,
+        } catch (WishlistException e) {
+            Assert.assertEquals(e.getReason(), WishlistExceptionReason.IDEA_NOT_FOUND,
                     "The reason should be IDEA_NOT_FOUND.");
         } catch (Exception e) {
             Assert.fail("Should have thrown a PersonOperationException.");
@@ -208,7 +214,7 @@ public class WishlistTest {
         Person person2 = new Person();
         person1.claimGiftIdeaInWishlist(person2, person1.getMyWishList().get(0));
 
-        GiftIdea newIdea = new GiftIdea();
+        GiftIdea newIdea = new GiftIdea(randomId());
         newIdea.setName("Sonic Screwdriver");
         person1.addIdeaToWishList(newIdea);
 
@@ -285,24 +291,37 @@ public class WishlistTest {
 
     private Person createPersonWith2IdeaWishlist() {
         Person person = new Person();
-        GiftIdea idea1 = new GiftIdea();
+        GiftIdea idea1 = new GiftIdea(randomId());
         idea1.setName("Raspberry Pi");
         person.addIdeaToWishList(idea1);
-        GiftIdea idea2 = new GiftIdea();
+        GiftIdea idea2 = new GiftIdea(randomId());
         idea2.setName("Arduino");
         person.addIdeaToWishList(idea2);
 
         return person;
     }
 
+    private Wishlist create2ItemWishlist() {
+        String person = randomId();
+        Wishlist wishlist = new Wishlist(randomId(), person);
+        GiftIdea idea1 = new GiftIdea(randomId());
+        idea1.setName("Raspberry Pi");
+        wishlist.addIdea(idea1);
+        GiftIdea idea2 = new GiftIdea(randomId());
+        idea2.setName("Arduino");
+        wishlist.addIdea(idea2);
+
+        return wishlist;
+    }
+
     private Person createPersonWith2IdeaWishlist2IdeaProposedList() {
         Person person = createPersonWith2IdeaWishlist();
         Person personClaiming = new Person();
-        GiftIdea proposed1 = new GiftIdea();
+        GiftIdea proposed1 = new GiftIdea(randomId());
         proposed1.setName("Sonic Screwdriver");
         person.addIdeaToWishList(proposed1);
         person.claimGiftIdeaInWishlist(personClaiming, proposed1);
-        GiftIdea proposed2 = new GiftIdea();
+        GiftIdea proposed2 = new GiftIdea(randomId());
         proposed2.setName("Light Saber");
         person.addIdeaToWishList(proposed2);
         person.claimGiftIdeaInWishlist(personClaiming, proposed2);

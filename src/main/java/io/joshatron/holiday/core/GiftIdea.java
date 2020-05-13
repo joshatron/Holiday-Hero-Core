@@ -1,11 +1,14 @@
 package io.joshatron.holiday.core;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 public class GiftIdea {
+    private String id;
     private String name;
+
+    public GiftIdea(String id) {
+        this.id = id;
+        this.name = "";
+    }
 }
