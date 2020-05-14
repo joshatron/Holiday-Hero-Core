@@ -31,11 +31,11 @@ public class Person {
         return id;
     }
 
-    public void addIdeaToWishList(GiftIdea idea) {
+    public void addIdeaToWishList(WishlistIdea idea) {
         wishList.add(new GiftIdeaAndStatus(idea));
     }
 
-    public List<GiftIdea> getMyWishList() {
+    public List<WishlistIdea> getMyWishList() {
         return wishList.stream().map(GiftIdeaAndStatus::getIdea).collect(Collectors.toList());
     }
 
@@ -43,7 +43,7 @@ public class Person {
         return wishList;
     }
 
-    public void removeIdeaFromWishList(GiftIdea idea) {
+    public void removeIdeaFromWishList(WishlistIdea idea) {
         if(anyItemClaimedInWishlist()) {
             throw new PersonOperationException(PersonOperationExceptionReason.CLAIMING_STARTED);
         }
@@ -54,7 +54,7 @@ public class Person {
         return wishList.stream().anyMatch(GiftIdeaAndStatus::isClaimed);
     }
 
-    public void claimGiftIdeaInWishlist(Person person, GiftIdea ideaToClaim) {
+    public void claimGiftIdeaInWishlist(Person person, WishlistIdea ideaToClaim) {
         if(person.equals(this)) {
             throw new PersonOperationException(PersonOperationExceptionReason.CANT_CLAIM_OWN);
         }
@@ -67,7 +67,7 @@ public class Person {
         matching.setClaimedBy(person);
     }
 
-    public GiftIdeaAndStatus findTheirItemInWishlist(GiftIdea idea) {
+    public GiftIdeaAndStatus findTheirItemInWishlist(WishlistIdea idea) {
         Optional<GiftIdeaAndStatus> matching = wishList.stream()
                 .filter(g -> g.getIdea().equals(idea))
                 .findFirst();
@@ -79,11 +79,11 @@ public class Person {
         return matching.get();
     }
 
-    public void removeClaimFromWishlist(GiftIdea idea) {
+    public void removeClaimFromWishlist(WishlistIdea idea) {
         findTheirItemInWishlist(idea).removeClaim();
     }
 
-    public boolean wishlistContainsIdea(GiftIdea idea) {
+    public boolean wishlistContainsIdea(WishlistIdea idea) {
         return wishList.stream().anyMatch(i -> i.getIdea().equals(idea));
     }
 
@@ -92,7 +92,7 @@ public class Person {
         wishList = wishList.stream().filter(idea -> !idea.isClaimed()).collect(Collectors.toList());
     }
 
-    public boolean proposedListContainsIdea(GiftIdea idea) {
+    public boolean proposedListContainsIdea(WishlistIdea idea) {
         return proposedList.stream().anyMatch(i -> i.getIdea().equals(idea));
     }
 
@@ -100,17 +100,17 @@ public class Person {
         return proposedList;
     }
 
-    public void acceptIdea(GiftIdea idea) {
+    public void acceptIdea(WishlistIdea idea) {
         GiftIdeaAndStatus item = proposedList.stream().filter(i -> i.getIdea().equals(idea)).findFirst().get();
         receivedList.add(item);
         proposedList = proposedList.stream().filter(i -> !i.getIdea().equals(idea)).collect(Collectors.toList());
     }
 
-    public boolean receivedListContainsIdea(GiftIdea idea) {
+    public boolean receivedListContainsIdea(WishlistIdea idea) {
         return receivedList.stream().anyMatch(i -> i.getIdea().equals(idea));
     }
 
-    public void denyIdea(GiftIdea idea) {
+    public void denyIdea(WishlistIdea idea) {
         GiftIdeaAndStatus item = proposedList.stream().filter(i -> i.getIdea().equals(idea)).findFirst().get();
         wishList.add(new GiftIdeaAndStatus(item.getIdea()));
         proposedList = proposedList.stream().filter(i -> !i.getIdea().equals(idea)).collect(Collectors.toList());

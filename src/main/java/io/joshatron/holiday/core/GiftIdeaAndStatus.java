@@ -4,10 +4,10 @@ import lombok.Data;
 
 @Data
 public class GiftIdeaAndStatus {
-    private GiftIdea idea;
+    private WishlistIdea idea;
     private Person claimedBy;
 
-    public GiftIdeaAndStatus(GiftIdea idea) {
+    public GiftIdeaAndStatus(WishlistIdea idea) {
         this.idea = idea;
         this.claimedBy = null;
     }

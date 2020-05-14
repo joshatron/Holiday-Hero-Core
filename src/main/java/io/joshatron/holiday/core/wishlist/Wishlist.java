@@ -1,6 +1,6 @@
 package io.joshatron.holiday.core.wishlist;
 
-import io.joshatron.holiday.core.GiftIdea;
+import io.joshatron.holiday.core.WishlistIdea;
 import io.joshatron.holiday.core.wishlist.exception.WishlistException;
 import io.joshatron.holiday.core.wishlist.exception.WishlistExceptionReason;
 
@@ -10,22 +10,23 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class Wishlist {
-    private List<GiftIdea> ideas;
+    private List<WishlistIdea> ideas;
 
     public Wishlist(String id, String owner) {
         ideas = new ArrayList<>();
     }
 
-    public void addIdea(GiftIdea idea) {
+    public void addIdea(WishlistIdea idea) {
         ideas.add(idea);
     }
 
-    public List<GiftIdea> getWishlist() {
+    public List<WishlistIdea> getWishlist() {
         return ideas;
     }
 
-    public boolean wishlistContainsIdea(GiftIdea idea) {
-        return ideas.contains(idea);
+    public boolean containsIdea(String idea) {
+        return ideas.stream()
+                .anyMatch(i -> i.getId().equals(idea));
     }
 
     public void removeIdea(String toRemove) {
@@ -34,8 +35,8 @@ public class Wishlist {
                 .collect(Collectors.toList());
     }
 
-    public GiftIdea findIdea(String idea) {
-        Optional<GiftIdea> ideaOptional = ideas.stream()
+    public WishlistIdea findIdea(String idea) {
+        Optional<WishlistIdea> ideaOptional = ideas.stream()
                 .filter(i -> i.getId().equals(idea))
                 .findFirst();
 
@@ -44,5 +45,10 @@ public class Wishlist {
         }
 
         throw new WishlistException(WishlistExceptionReason.IDEA_NOT_FOUND);
+    }
+
+    public void claimIdea(String claimer, String ideaToClaim) {
+        WishlistIdea idea = findIdea(ideaToClaim);
+        idea.setClaimer(claimer);
     }
 }
