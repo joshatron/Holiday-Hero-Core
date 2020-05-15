@@ -76,7 +76,7 @@ public class WishlistTest {
             Assert.assertEquals(e.getReason(), WishlistExceptionReason.IDEA_NOT_FOUND,
                     "The reason should be IDEA_NOT_FOUND.");
         } catch (Exception e) {
-            Assert.fail("Should have thrown a PersonOperationException.");
+            Assert.fail("Should have thrown a wishlist exception.");
         }
     }
 
@@ -107,56 +107,60 @@ public class WishlistTest {
 
     @Test
     public void tryToClaimAlreadyClaimed() {
-        Person person1 = createPersonWith2IdeaWishlist();
-        Person person2 = new Person();
-        Person person3 = new Person();
-        WishlistIdea ideaToClaim = person1.getMyWishList().get(1);
-        person1.claimGiftIdeaInWishlist(person2, ideaToClaim);
+        Wishlist wishlist = create2ItemWishlist();
+        String firstClaimer = randomId();
+        String secondClaimer = randomId();
+        WishlistIdea ideaToClaim = wishlist.getWishlist().get(1);
+        wishlist.claimIdea(firstClaimer, ideaToClaim.getId());
 
         try {
-            person1.claimGiftIdeaInWishlist(person3, ideaToClaim);
+            wishlist.claimIdea(secondClaimer, ideaToClaim.getId());
             Assert.fail("Should have thrown exception because reclaiming.");
-        } catch (PersonOperationException e) {
-            Assert.assertEquals(e.getReason(), PersonOperationExceptionReason.ALREADY_CLAIMED,
+        } catch (WishlistException e) {
+            Assert.assertEquals(e.getReason(), WishlistExceptionReason.ALREADY_CLAIMED,
                     "The reason should have been ALREADY_CLAIMED.");
-            Assert.assertEquals(person1.findTheirItemInWishlist(ideaToClaim).getClaimedBy(), person2,
-                    "Should be claimed by person2 still.");
+            Assert.assertEquals(wishlist.findIdea(ideaToClaim.getId()).getClaimer(), firstClaimer,
+                    "Should be claimed by firstClaimer still.");
         } catch (Exception e) {
-            Assert.fail("Should have been a person operation exception");
+            Assert.fail("Should have been a wishlist exception");
         }
     }
 
     @Test
     public void tryToClaimOwn() {
-        Person person = createPersonWith2IdeaWishlist();
-        WishlistIdea ideaToClaim = person.getMyWishList().get(1);
+        Wishlist wishlist = create2ItemWishlist();
+        WishlistIdea ideaToClaim = wishlist.getWishlist().get(1);
 
         try {
-            person.claimGiftIdeaInWishlist(person, ideaToClaim);
+            wishlist.claimIdea(wishlist.getOwner(), ideaToClaim.getId());
             Assert.fail("Should have thrown an exception trying to claim.");
-        } catch (PersonOperationException e) {
-            Assert.assertEquals(e.getReason(), PersonOperationExceptionReason.CANT_CLAIM_OWN,
+        } catch (WishlistException e) {
+            Assert.assertEquals(e.getReason(), WishlistExceptionReason.CANT_CLAIM_OWN,
                     "The reason should have been CANT_CLAIM_OWN.");
-            Assert.assertFalse(person.findTheirItemInWishlist(ideaToClaim).isClaimed(),
+            Assert.assertFalse(wishlist.findIdea(ideaToClaim.getId()).isClaimed(),
                     "The idea should not have been claimed.");
+        } catch (Exception e) {
+            Assert.fail("Should have been a wishlist exception");
         }
     }
 
     @Test
     public void tryToClaimOwnAlreadyClaimed() {
-        Person person1 = createPersonWith2IdeaWishlist();
-        Person person2 = new Person();
-        WishlistIdea ideaToClaim = person1.getMyWishList().get(0);
-        person1.claimGiftIdeaInWishlist(person2, ideaToClaim);
+        Wishlist wishlist = create2ItemWishlist();
+        String claimer = randomId();
+        WishlistIdea ideaToClaim = wishlist.getWishlist().get(0);
+        wishlist.claimIdea(claimer, ideaToClaim.getId());
 
         try {
-            person1.claimGiftIdeaInWishlist(person1, ideaToClaim);
+            wishlist.claimIdea(wishlist.getOwner(), ideaToClaim.getId());
             Assert.fail("Should have thrown an exception trying to claim.");
-        } catch (PersonOperationException e) {
-            Assert.assertEquals(e.getReason(), PersonOperationExceptionReason.CANT_CLAIM_OWN,
+        } catch (WishlistException e) {
+            Assert.assertEquals(e.getReason(), WishlistExceptionReason.CANT_CLAIM_OWN,
                     "The reason should have been CANT_CLAIM_OWN.");
-            Assert.assertEquals(person1.findTheirItemInWishlist(ideaToClaim).getClaimedBy(), person2,
-                    "Should still be claimed by person2.");
+            Assert.assertEquals(wishlist.findIdea(ideaToClaim.getId()).getClaimer(), claimer,
+                    "Should still be claimed by claimer.");
+        } catch (Exception e) {
+            Assert.fail("Should have been a wishlist exception");
         }
     }
 

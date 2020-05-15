@@ -10,9 +10,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class Wishlist {
+    private String owner;
     private List<WishlistIdea> ideas;
 
     public Wishlist(String id, String owner) {
+        this.owner = owner;
         ideas = new ArrayList<>();
     }
 
@@ -48,7 +50,20 @@ public class Wishlist {
     }
 
     public void claimIdea(String claimer, String ideaToClaim) {
+        if(claimer.equals(owner)) {
+            throw new WishlistException(WishlistExceptionReason.CANT_CLAIM_OWN);
+        }
+
         WishlistIdea idea = findIdea(ideaToClaim);
+
+        if(idea.isClaimed()) {
+            throw new WishlistException(WishlistExceptionReason.ALREADY_CLAIMED);
+        }
+
         idea.setClaimer(claimer);
+    }
+
+    public String getOwner() {
+        return owner;
     }
 }
