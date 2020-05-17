@@ -1,4 +1,4 @@
-package io.joshatron.holiday.core;
+package io.joshatron.holiday.core.wishlist;
 
 import lombok.Data;
 
@@ -16,5 +16,9 @@ public class WishlistIdea {
 
     public boolean isClaimed() {
         return !claimer.isEmpty();
+    }
+
+    public void unclaim() {
+        claimer = "";
     }
 }
