@@ -32,9 +32,18 @@ public class Wishlist {
     }
 
     public void removeIdea(String toRemove) {
+        if(claimingStarted()) {
+            throw new WishlistException(WishlistExceptionReason.CLAIMING_STARTED);
+        }
+
         ideas = ideas.stream()
                 .filter(i -> !i.getId().equals(toRemove))
                 .collect(Collectors.toList());
+    }
+
+    private boolean claimingStarted() {
+        return ideas.stream()
+                .anyMatch(WishlistIdea::isClaimed);
     }
 
     public WishlistIdea findIdea(String idea) {

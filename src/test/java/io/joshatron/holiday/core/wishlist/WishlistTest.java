@@ -166,23 +166,19 @@ public class WishlistTest {
 
     @Test
     public void tryToRemoveItemAfterClaiming() {
-        Person person1 = createPersonWith2IdeaWishlist();
-        Person person2 = new Person();
-        WishlistIdea ideaClaimed = person1.getMyWishList().get(0);
-        person1.claimGiftIdeaInWishlist(person2, ideaClaimed);
+        Wishlist wishlist = create2ItemWishlist();
+        String claimer = randomId();
+        WishlistIdea ideaClaimed = wishlist.getWishlist().get(0);
+        wishlist.claimIdea(claimer, ideaClaimed.getId());
 
         try {
-            person1.removeIdeaFromWishList(ideaClaimed);
+            wishlist.removeIdea(ideaClaimed.getId());
             Assert.fail("Should have thrown exception removing item.");
-        } catch (PersonOperationException e) {
-            Assert.assertEquals(e.getReason(), PersonOperationExceptionReason.CLAIMING_STARTED);
-            try {
-                person1.findTheirItemInWishlist(ideaClaimed);
-            } catch (PersonOperationException e2) {
-                Assert.fail("Should not have removed the item.");
-            }
+        } catch (WishlistException e) {
+            Assert.assertEquals(e.getReason(), WishlistExceptionReason.CLAIMING_STARTED, "Should be the proper reason.");
+            Assert.assertTrue(wishlist.containsIdea(ideaClaimed.getId()), "Should not have removed the idea.");
         } catch (Exception e) {
-            Assert.fail("Should only have thrown PersonOperationException.");
+            Assert.fail("Should only have thrown wishlist exception.");
         }
     }
 
