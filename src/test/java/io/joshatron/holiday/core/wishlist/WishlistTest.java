@@ -57,7 +57,7 @@ public class WishlistTest {
         Wishlist wishlist = create2ItemWishlist();
         WishlistIdea ideaInList = wishlist.getWishlist().get(1);
 
-        WishlistIdea found = wishlist.findIdea(ideaInList.getId());
+        WishlistIdea found = wishlist.getIdea(ideaInList.getId());
         Assert.assertEquals(found, ideaInList, "The found idea and one to find should match.");
     }
 
@@ -67,7 +67,7 @@ public class WishlistTest {
         WishlistIdea ideaNotInList = new WishlistIdea(randomId());
 
         try {
-            wishlist.findIdea(ideaNotInList.getId());
+            wishlist.getIdea(ideaNotInList.getId());
             Assert.fail("Should have thrown exception since not in list.");
         } catch (WishlistException e) {
             Assert.assertEquals(e.getReason(), WishlistExceptionReason.IDEA_NOT_FOUND,
@@ -85,9 +85,9 @@ public class WishlistTest {
         WishlistIdea ideaToNotClaim = wishlist.getWishlist().get(0);
         wishlist.claimIdea(claimer, ideaToClaim.getId());
 
-        Assert.assertFalse(wishlist.findIdea(ideaToNotClaim.getId()).isClaimed(),
+        Assert.assertFalse(wishlist.getIdea(ideaToNotClaim.getId()).isClaimed(),
                 "Should not have claimed unclaimed idea.");
-        Assert.assertTrue(wishlist.findIdea(ideaToClaim.getId()).isClaimed(),
+        Assert.assertTrue(wishlist.getIdea(ideaToClaim.getId()).isClaimed(),
                 "Should have claimed claimed idea.");
     }
 
@@ -98,7 +98,7 @@ public class WishlistTest {
         String ideaToClaim = wishlist.getWishlist().get(0).getId();
         wishlist.claimIdea(claimer, ideaToClaim);
 
-        Assert.assertEquals(wishlist.findIdea(ideaToClaim).getClaimer(), claimer,
+        Assert.assertEquals(wishlist.getIdea(ideaToClaim).getClaimer(), claimer,
                 "Should be claimed by person3.");
     }
 
@@ -116,7 +116,7 @@ public class WishlistTest {
         } catch (WishlistException e) {
             Assert.assertEquals(e.getReason(), WishlistExceptionReason.ALREADY_CLAIMED,
                     "The reason should have been ALREADY_CLAIMED.");
-            Assert.assertEquals(wishlist.findIdea(ideaToClaim.getId()).getClaimer(), firstClaimer,
+            Assert.assertEquals(wishlist.getIdea(ideaToClaim.getId()).getClaimer(), firstClaimer,
                     "Should be claimed by firstClaimer still.");
         } catch (Exception e) {
             Assert.fail("Should have been a wishlist exception");
@@ -134,7 +134,7 @@ public class WishlistTest {
         } catch (WishlistException e) {
             Assert.assertEquals(e.getReason(), WishlistExceptionReason.CANT_CLAIM_OWN,
                     "The reason should have been CANT_CLAIM_OWN.");
-            Assert.assertFalse(wishlist.findIdea(ideaToClaim.getId()).isClaimed(),
+            Assert.assertFalse(wishlist.getIdea(ideaToClaim.getId()).isClaimed(),
                     "The idea should not have been claimed.");
         } catch (Exception e) {
             Assert.fail("Should have been a wishlist exception");
@@ -154,7 +154,7 @@ public class WishlistTest {
         } catch (WishlistException e) {
             Assert.assertEquals(e.getReason(), WishlistExceptionReason.CANT_CLAIM_OWN,
                     "The reason should have been CANT_CLAIM_OWN.");
-            Assert.assertEquals(wishlist.findIdea(ideaToClaim.getId()).getClaimer(), claimer,
+            Assert.assertEquals(wishlist.getIdea(ideaToClaim.getId()).getClaimer(), claimer,
                     "Should still be claimed by claimer.");
         } catch (Exception e) {
             Assert.fail("Should have been a wishlist exception");
@@ -219,7 +219,7 @@ public class WishlistTest {
         wishlist.claimIdea(claimer, ideaClaimed.getId());
         wishlist.unclaimIdea(ideaClaimed.getId());
 
-        Assert.assertFalse(wishlist.findIdea(ideaClaimed.getId()).isClaimed(), "Should not be claimed anymore.");
+        Assert.assertFalse(wishlist.getIdea(ideaClaimed.getId()).isClaimed(), "Should not be claimed anymore.");
     }
 
     @Test
@@ -232,7 +232,7 @@ public class WishlistTest {
         wishlist.unclaimIdea(ideaClaimed.getId());
         wishlist.claimIdea(secondClaimer, ideaClaimed.getId());
 
-        Assert.assertEquals(wishlist.findIdea(ideaClaimed.getId()).getClaimer(), secondClaimer,
+        Assert.assertEquals(wishlist.getIdea(ideaClaimed.getId()).getClaimer(), secondClaimer,
                 "Should be claimed again by second claimer.");
     }
 

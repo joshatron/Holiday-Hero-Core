@@ -34,6 +34,18 @@ public class Wishlist {
                 .anyMatch(i -> i.getId().equals(idea));
     }
 
+    public WishlistIdea getIdea(String idea) {
+        Optional<WishlistIdea> ideaOptional = wishlist.stream()
+                .filter(i -> i.getId().equals(idea))
+                .findFirst();
+
+        if(ideaOptional.isPresent()) {
+            return ideaOptional.get();
+        }
+
+        throw new WishlistException(WishlistExceptionReason.IDEA_NOT_FOUND);
+    }
+
     public void removeIdea(String toRemove) {
         if(claimingStarted()) {
             throw new WishlistException(WishlistExceptionReason.CLAIMING_STARTED);
@@ -49,24 +61,12 @@ public class Wishlist {
                 .anyMatch(WishlistIdea::isClaimed);
     }
 
-    public WishlistIdea findIdea(String idea) {
-        Optional<WishlistIdea> ideaOptional = wishlist.stream()
-                .filter(i -> i.getId().equals(idea))
-                .findFirst();
-
-        if(ideaOptional.isPresent()) {
-            return ideaOptional.get();
-        }
-
-        throw new WishlistException(WishlistExceptionReason.IDEA_NOT_FOUND);
-    }
-
     public void claimIdea(String claimer, String ideaToClaim) {
         if(claimer.equals(owner)) {
             throw new WishlistException(WishlistExceptionReason.CANT_CLAIM_OWN);
         }
 
-        WishlistIdea idea = findIdea(ideaToClaim);
+        WishlistIdea idea = getIdea(ideaToClaim);
 
         if(idea.isClaimed()) {
             throw new WishlistException(WishlistExceptionReason.ALREADY_CLAIMED);
@@ -76,7 +76,7 @@ public class Wishlist {
     }
 
     public void unclaimIdea(String idea) {
-        findIdea(idea).unclaim();
+        getIdea(idea).unclaim();
     }
 
     public List<WishlistIdea> rollover() {
