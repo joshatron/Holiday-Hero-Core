@@ -14,6 +14,12 @@ public class WishlistIdea {
         this.claimer = "";
     }
 
+    public WishlistIdea(WishlistIdea other) {
+        this.id = other.id;
+        this.name = other.name;
+        this.claimer = other.claimer;
+    }
+
     public boolean isClaimed() {
         return !claimer.isEmpty();
     }

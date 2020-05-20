@@ -77,6 +77,8 @@ public class WishlistTest {
         }
     }
 
+    //TODO: Need method to get entire list
+
     @Test
     public void markItemAsClaimed() {
         Wishlist wishlist = create2ItemWishlist();
