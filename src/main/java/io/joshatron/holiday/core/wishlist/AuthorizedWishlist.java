@@ -4,9 +4,10 @@ import io.joshatron.holiday.core.wishlist.exception.WishlistException;
 import io.joshatron.holiday.core.wishlist.exception.WishlistExceptionReason;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class AuthorizedWishlist {
-    Wishlist wishlist;
+    private Wishlist wishlist;
 
     public AuthorizedWishlist(Wishlist wishlist) {
         this.wishlist = wishlist;
@@ -64,5 +65,21 @@ public class AuthorizedWishlist {
         }
 
         return wishlist.rollover();
+    }
+
+    public String getId(String user) {
+        return wishlist.getId();
+    }
+
+    public List<WishlistIdea> getIdeas(String user) {
+        List<WishlistIdea> ideas = wishlist.getList().stream()
+                .map(WishlistIdea::new)
+                .collect(Collectors.toList());
+
+        if(wishlist.getOwner().equals(user)) {
+            ideas.forEach(WishlistIdea::unclaim);
+        }
+
+        return ideas;
     }
 }

@@ -18,8 +18,8 @@ public class WishlistTest {
         idea.setName("Raspberry Pi");
         wishlist.addIdea(idea);
 
-        Assert.assertEquals(wishlist.getWishlist().size(), 1, "Should only have 1 item in it.");
-        Assert.assertEquals(wishlist.getWishlist().get(0), idea, "Should contain the item passed.");
+        Assert.assertEquals(wishlist.getList().size(), 1, "Should only have 1 item in it.");
+        Assert.assertEquals(wishlist.getList().get(0), idea, "Should contain the item passed.");
     }
 
     @Test
@@ -33,7 +33,7 @@ public class WishlistTest {
         idea2.setName("Arduino");
         wishlist.addIdea(idea2);
 
-        Assert.assertEquals(wishlist.getWishlist().size(), 2, "Should contain 2 items in it.");
+        Assert.assertEquals(wishlist.getList().size(), 2, "Should contain 2 items in it.");
         Assert.assertTrue(wishlist.containsIdea(idea1.getId()), "One element should be the first item added.");
         Assert.assertTrue(wishlist.containsIdea(idea2.getId()), "One element should be the second item added.");
         Assert.assertFalse(wishlist.containsIdea(randomId()), "One element should be the second item added.");
@@ -42,20 +42,20 @@ public class WishlistTest {
     @Test
     public void removeGiftIdea() {
         Wishlist wishlist = create2ItemWishlist();
-        WishlistIdea ideaToRemove = wishlist.getWishlist().get(0);
-        WishlistIdea ideaToKeep = wishlist.getWishlist().get(1);
+        WishlistIdea ideaToRemove = wishlist.getList().get(0);
+        WishlistIdea ideaToKeep = wishlist.getList().get(1);
 
         wishlist.removeIdea(ideaToRemove.getId());
 
-        Assert.assertEquals(wishlist.getWishlist().size(), 1, "Should only have one item left in it.");
+        Assert.assertEquals(wishlist.getList().size(), 1, "Should only have one item left in it.");
         Assert.assertFalse(wishlist.containsIdea(ideaToRemove.getId()), "Should not contain the removed item.");
         Assert.assertTrue(wishlist.containsIdea(ideaToKeep.getId()), "Should contain the kept item.");
     }
 
     @Test
-    public void findGiftIdea() {
+    public void getGiftIdea() {
         Wishlist wishlist = create2ItemWishlist();
-        WishlistIdea ideaInList = wishlist.getWishlist().get(1);
+        WishlistIdea ideaInList = wishlist.getList().get(1);
 
         WishlistIdea found = wishlist.getIdea(ideaInList.getId());
         Assert.assertEquals(found, ideaInList, "The found idea and one to find should match.");
@@ -77,14 +77,12 @@ public class WishlistTest {
         }
     }
 
-    //TODO: Need method to get entire list
-
     @Test
     public void markItemAsClaimed() {
         Wishlist wishlist = create2ItemWishlist();
         String claimer = randomId();
-        WishlistIdea ideaToClaim = wishlist.getWishlist().get(1);
-        WishlistIdea ideaToNotClaim = wishlist.getWishlist().get(0);
+        WishlistIdea ideaToClaim = wishlist.getList().get(1);
+        WishlistIdea ideaToNotClaim = wishlist.getList().get(0);
         wishlist.claimIdea(claimer, ideaToClaim.getId());
 
         Assert.assertFalse(wishlist.getIdea(ideaToNotClaim.getId()).isClaimed(),
@@ -97,7 +95,7 @@ public class WishlistTest {
     public void checkClaimer() {
         Wishlist wishlist = create2ItemWishlist();
         String claimer = randomId();
-        String ideaToClaim = wishlist.getWishlist().get(0).getId();
+        String ideaToClaim = wishlist.getList().get(0).getId();
         wishlist.claimIdea(claimer, ideaToClaim);
 
         Assert.assertEquals(wishlist.getIdea(ideaToClaim).getClaimer(), claimer,
@@ -109,7 +107,7 @@ public class WishlistTest {
         Wishlist wishlist = create2ItemWishlist();
         String firstClaimer = randomId();
         String secondClaimer = randomId();
-        WishlistIdea ideaToClaim = wishlist.getWishlist().get(1);
+        WishlistIdea ideaToClaim = wishlist.getList().get(1);
         wishlist.claimIdea(firstClaimer, ideaToClaim.getId());
 
         try {
@@ -128,7 +126,7 @@ public class WishlistTest {
     @Test
     public void tryToClaimOwn() {
         Wishlist wishlist = create2ItemWishlist();
-        WishlistIdea ideaToClaim = wishlist.getWishlist().get(1);
+        WishlistIdea ideaToClaim = wishlist.getList().get(1);
 
         try {
             wishlist.claimIdea(wishlist.getOwner(), ideaToClaim.getId());
@@ -147,7 +145,7 @@ public class WishlistTest {
     public void tryToClaimOwnAlreadyClaimed() {
         Wishlist wishlist = create2ItemWishlist();
         String claimer = randomId();
-        WishlistIdea ideaToClaim = wishlist.getWishlist().get(0);
+        WishlistIdea ideaToClaim = wishlist.getList().get(0);
         wishlist.claimIdea(claimer, ideaToClaim.getId());
 
         try {
@@ -167,7 +165,7 @@ public class WishlistTest {
     public void tryToRemoveItemAfterClaiming() {
         Wishlist wishlist = create2ItemWishlist();
         String claimer = randomId();
-        WishlistIdea ideaClaimed = wishlist.getWishlist().get(0);
+        WishlistIdea ideaClaimed = wishlist.getList().get(0);
         wishlist.claimIdea(claimer, ideaClaimed.getId());
 
         try {
@@ -185,8 +183,8 @@ public class WishlistTest {
     public void tryToRemoveOtherItemAfterClaiming() {
         Wishlist wishlist = create2ItemWishlist();
         String claimer = randomId();
-        WishlistIdea ideaClaimed = wishlist.getWishlist().get(0);
-        WishlistIdea ideaNotClaimed = wishlist.getWishlist().get(1);
+        WishlistIdea ideaClaimed = wishlist.getList().get(0);
+        WishlistIdea ideaNotClaimed = wishlist.getList().get(1);
         wishlist.claimIdea(claimer, ideaClaimed.getId());
 
         try {
@@ -204,7 +202,7 @@ public class WishlistTest {
     public void addItemAfterClaimingStarted() {
         Wishlist wishlist = create2ItemWishlist();
         String claimer = randomId();
-        wishlist.claimIdea(claimer, wishlist.getWishlist().get(0).getId());
+        wishlist.claimIdea(claimer, wishlist.getList().get(0).getId());
 
         WishlistIdea newIdea = new WishlistIdea(randomId());
         newIdea.setName("Sonic Screwdriver");
@@ -217,7 +215,7 @@ public class WishlistTest {
     public void unclaimIdea() {
         Wishlist wishlist = create2ItemWishlist();
         String claimer = randomId();
-        WishlistIdea ideaClaimed = wishlist.getWishlist().get(1);
+        WishlistIdea ideaClaimed = wishlist.getList().get(1);
         wishlist.claimIdea(claimer, ideaClaimed.getId());
         wishlist.unclaimIdea(ideaClaimed.getId());
 
@@ -229,7 +227,7 @@ public class WishlistTest {
         Wishlist wishlist = create2ItemWishlist();
         String firstClaimer = randomId();
         String secondClaimer = randomId();
-        WishlistIdea ideaClaimed = wishlist.getWishlist().get(1);
+        WishlistIdea ideaClaimed = wishlist.getList().get(1);
         wishlist.claimIdea(firstClaimer, ideaClaimed.getId());
         wishlist.unclaimIdea(ideaClaimed.getId());
         wishlist.claimIdea(secondClaimer, ideaClaimed.getId());
@@ -242,8 +240,8 @@ public class WishlistTest {
     public void rolloverWishlist() {
         Wishlist wishlist = create2ItemWishlist();
         String claimer = randomId();
-        WishlistIdea ideaClaimed = wishlist.getWishlist().get(0);
-        WishlistIdea ideaNotClaimed = wishlist.getWishlist().get(1);
+        WishlistIdea ideaClaimed = wishlist.getList().get(0);
+        WishlistIdea ideaNotClaimed = wishlist.getList().get(1);
         wishlist.claimIdea(claimer, ideaClaimed.getId());
         List<WishlistIdea> rolledOver = wishlist.rollover();
 

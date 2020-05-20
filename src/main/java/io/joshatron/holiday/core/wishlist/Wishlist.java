@@ -15,27 +15,27 @@ import java.util.stream.Collectors;
 @EqualsAndHashCode
 @ToString
 public class Wishlist {
-    private String id;
-    private String owner;
-    private List<WishlistIdea> wishlist;
+    private final String id;
+    private final String owner;
+    private List<WishlistIdea> list;
 
     public Wishlist(String id, String owner) {
         this.id = id;
         this.owner = owner;
-        wishlist = new ArrayList<>();
+        list = new ArrayList<>();
     }
 
     public void addIdea(WishlistIdea idea) {
-        wishlist.add(idea);
+        list.add(idea);
     }
 
     public boolean containsIdea(String idea) {
-        return wishlist.stream()
+        return list.stream()
                 .anyMatch(i -> i.getId().equals(idea));
     }
 
     public WishlistIdea getIdea(String idea) {
-        Optional<WishlistIdea> ideaOptional = wishlist.stream()
+        Optional<WishlistIdea> ideaOptional = list.stream()
                 .filter(i -> i.getId().equals(idea))
                 .findFirst();
 
@@ -51,13 +51,13 @@ public class Wishlist {
             throw new WishlistException(WishlistExceptionReason.CLAIMING_STARTED);
         }
 
-        wishlist = wishlist.stream()
+        list = list.stream()
                 .filter(i -> !i.getId().equals(toRemove))
                 .collect(Collectors.toList());
     }
 
     private boolean claimingStarted() {
-        return wishlist.stream()
+        return list.stream()
                 .anyMatch(WishlistIdea::isClaimed);
     }
 
@@ -80,11 +80,11 @@ public class Wishlist {
     }
 
     public List<WishlistIdea> rollover() {
-        List<WishlistIdea> rolledOver = wishlist.stream()
+        List<WishlistIdea> rolledOver = list.stream()
                 .filter(WishlistIdea::isClaimed)
                 .collect(Collectors.toList());
 
-        wishlist = wishlist.stream()
+        list = list.stream()
                 .filter(i -> !i.isClaimed())
                 .collect(Collectors.toList());
 

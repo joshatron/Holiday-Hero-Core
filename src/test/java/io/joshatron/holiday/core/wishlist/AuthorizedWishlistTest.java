@@ -187,6 +187,59 @@ public class AuthorizedWishlistTest {
         Assert.assertFalse(authorizedList.containsIdea(randomId(), idea.getId()), "The idea should no longer be in the list.");
     }
 
+    @Test
+    public void anyoneCanGetListId() {
+        String listId = randomId();
+        Wishlist wishlist = new Wishlist(listId, randomId());
+        AuthorizedWishlist authorizedList = new AuthorizedWishlist(wishlist);
+
+        Assert.assertEquals(authorizedList.getId(randomId()), listId, "The id returned should be correct.");
+    }
+
+    @Test
+    public void anyoneCanGetFullList() {
+        String owner = randomId();
+        Wishlist wishlist = new Wishlist(randomId(), owner);
+        AuthorizedWishlist authorizedList = new AuthorizedWishlist(wishlist);
+
+        WishlistIdea idea = new WishlistIdea(randomId());
+        authorizedList.addIdea(owner, idea);
+
+        Assert.assertEquals(authorizedList.getIdeas(randomId()), wishlist.getList(), "The lists should be identical.");
+    }
+
+    @Test
+    public void whenOwnerGetsListThereAreNoClaims() {
+        String owner = randomId();
+        Wishlist wishlist = new Wishlist(randomId(), owner);
+        AuthorizedWishlist authorizedList = new AuthorizedWishlist(wishlist);
+
+        WishlistIdea idea = new WishlistIdea(randomId());
+        authorizedList.addIdea(owner, idea);
+        authorizedList.claimIdea(randomId(), idea.getId());
+
+        List<WishlistIdea> ideas = authorizedList.getIdeas(owner);
+        Assert.assertFalse(ideas.get(0).isClaimed(), "The idea should not be claimed to the owner.");
+
+        ideas = authorizedList.getIdeas(randomId());
+        Assert.assertTrue(ideas.get(0).isClaimed(), "The idea should be claimed by a random user.");
+    }
+
+    @Test
+    public void getFullListReturnsCopiesOfIdeas() {
+        String owner = randomId();
+        Wishlist wishlist = new Wishlist(randomId(), owner);
+        AuthorizedWishlist authorizedList = new AuthorizedWishlist(wishlist);
+
+        WishlistIdea idea = new WishlistIdea(randomId());
+        authorizedList.addIdea(owner, idea);
+
+        List<WishlistIdea> ideas = authorizedList.getIdeas(randomId());
+        ideas.get(0).setId("NOT A REAL ID");
+
+        Assert.assertNotEquals(ideas, wishlist.getList());
+    }
+
     private String randomId() {
         return UUID.randomUUID().toString();
     }
