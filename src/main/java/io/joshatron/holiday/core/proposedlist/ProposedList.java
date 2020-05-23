@@ -19,4 +19,13 @@ public class ProposedList {
         this.owner = owner;
         this.list = new ArrayList<>();
     }
+
+    public void addIdea(ProposedIdea idea) {
+        list.add(idea);
+    }
+
+    public boolean containsIdea(String idea) {
+        return list.stream()
+                .anyMatch(i -> i.getId().equals(idea));
+    }
 }

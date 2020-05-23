@@ -18,6 +18,16 @@ public class ProposedListTest {
         Assert.assertEquals(list.getList(), new ArrayList<>());
     }
 
+    @Test
+    public void addItem() {
+        ProposedList list = new ProposedList(randomId(), randomId());
+        ProposedIdea idea = new ProposedIdea(randomId());
+
+        Assert.assertFalse(list.containsIdea(idea.getId()));
+        list.addIdea(idea);
+        Assert.assertTrue(list.containsIdea(idea.getId()));
+    }
+
     private String randomId() {
         return UUID.randomUUID().toString();
     }
