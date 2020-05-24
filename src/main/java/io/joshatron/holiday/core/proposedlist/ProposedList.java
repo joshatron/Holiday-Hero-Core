@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.ToString;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @EqualsAndHashCode
@@ -27,5 +28,9 @@ public class ProposedList {
     public boolean containsIdea(String idea) {
         return list.stream()
                 .anyMatch(i -> i.getId().equals(idea));
+    }
+
+    public void addIdeas(List<ProposedIdea> ideas) {
+        ideas.forEach(this::addIdea);
     }
 }
