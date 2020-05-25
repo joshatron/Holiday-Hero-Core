@@ -6,5 +6,6 @@ public enum WishlistExceptionReason {
     ALREADY_CLAIMED,
     CANT_CLAIM_OWN,
     CLAIMING_STARTED,
-    USER_NOT_AUTHORIZED;
+    USER_NOT_AUTHORIZED,
+    IDEA_NOT_CLAIMED;
 }

@@ -54,6 +54,9 @@ public class Wishlist {
         if(claimingStarted()) {
             throw new WishlistException(WishlistExceptionReason.CLAIMING_STARTED);
         }
+        if(!containsIdea(toRemove)) {
+            throw new WishlistException(WishlistExceptionReason.IDEA_NOT_FOUND);
+        }
 
         list = list.stream()
                 .filter(i -> !i.getId().equals(toRemove))
@@ -80,7 +83,12 @@ public class Wishlist {
     }
 
     public void unclaimIdea(String idea) {
-        getIdea(idea).unclaim();
+        WishlistIdea foundIdea = getIdea(idea);
+        if(!foundIdea.isClaimed()) {
+            throw new WishlistException(WishlistExceptionReason.IDEA_NOT_CLAIMED);
+        }
+
+        foundIdea.unclaim();
     }
 
     public List<WishlistIdea> rollover() {

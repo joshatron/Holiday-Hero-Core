@@ -11,9 +11,9 @@ import java.util.List;
 @EqualsAndHashCode
 @ToString
 public class ProposedList {
-    private String id;
-    private String owner;
-    private ArrayList<ProposedIdea> list;
+    private final String id;
+    private final String owner;
+    private final ArrayList<ProposedIdea> list;
 
     public ProposedList(String id, String owner) {
         this.id = id;

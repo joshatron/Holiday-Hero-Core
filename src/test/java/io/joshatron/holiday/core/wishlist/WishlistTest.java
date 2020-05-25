@@ -75,6 +75,27 @@ public class WishlistTest {
     }
 
     @Test
+    public void removeGiftIdeaTwice() {
+        Wishlist wishlist = create2ItemWishlist();
+        WishlistIdea ideaToRemove = wishlist.getList().get(1);
+        WishlistIdea ideaToKeep = wishlist.getList().get(0);
+
+        wishlist.removeIdea(ideaToRemove.getId());
+
+        try {
+            wishlist.removeIdea(ideaToRemove.getId());
+            Assert.fail("Should have thrown an exception.");
+        } catch (WishlistException e) {
+            Assert.assertEquals(e.getReason(), WishlistExceptionReason.IDEA_NOT_FOUND);
+            Assert.assertEquals(wishlist.getList().size(), 1, "Should only have one item left in it.");
+            Assert.assertFalse(wishlist.containsIdea(ideaToRemove.getId()), "Should not contain the removed item.");
+            Assert.assertTrue(wishlist.containsIdea(ideaToKeep.getId()), "Should contain the kept item.");
+        } catch (Exception e) {
+            Assert.fail("Should have thrown a wishlist exception.");
+        }
+    }
+
+    @Test
     public void getGiftIdea() {
         Wishlist wishlist = create2ItemWishlist();
         WishlistIdea ideaInList = wishlist.getList().get(1);
@@ -100,7 +121,7 @@ public class WishlistTest {
     }
 
     @Test
-    public void markItemAsClaimed() {
+    public void markIdeaAsClaimed() {
         Wishlist wishlist = create2ItemWishlist();
         String claimer = randomId();
         WishlistIdea ideaToClaim = wishlist.getList().get(1);
@@ -111,6 +132,23 @@ public class WishlistTest {
                 "Should not have claimed unclaimed idea.");
         Assert.assertTrue(wishlist.getIdea(ideaToClaim.getId()).isClaimed(),
                 "Should have claimed claimed idea.");
+    }
+
+    @Test
+    public void claimIdeaThatDoesNotExist() {
+        Wishlist wishlist = create2ItemWishlist();
+        String claimer = randomId();
+        String invalidIdea = randomId();
+
+        try {
+            wishlist.claimIdea(claimer, invalidIdea);
+            Assert.fail("Should have thrown an exception.");
+        } catch (WishlistException e) {
+            Assert.assertEquals(e.getReason(), WishlistExceptionReason.IDEA_NOT_FOUND, "Reason should be idea not found.");
+            Assert.assertFalse(wishlist.containsIdea(invalidIdea));
+        } catch (Exception e) {
+            Assert.fail("Should have thrown a wishlist exception.");
+        }
     }
 
     @Test
@@ -245,6 +283,38 @@ public class WishlistTest {
     }
 
     @Test
+    public void unclaimUnclaimedIdea() {
+        Wishlist wishlist = create2ItemWishlist();
+        WishlistIdea idea = wishlist.getList().get(0);
+
+        try {
+            wishlist.unclaimIdea(idea.getId());
+            Assert.fail("Should have thrown an exception.");
+        } catch (WishlistException e) {
+            Assert.assertEquals(e.getReason(), WishlistExceptionReason.IDEA_NOT_CLAIMED, "Reason should be idea not claimed.");
+            Assert.assertFalse(wishlist.getIdea(idea.getId()).isClaimed(), "Should still not be claimed.");
+        } catch (Exception e) {
+            Assert.fail("Should have thrown a wishlist exception.");
+        }
+    }
+
+    @Test
+    public void unclaimNonpresentIdea() {
+        Wishlist wishlist = create2ItemWishlist();
+        String idea = randomId();
+
+        try {
+            wishlist.unclaimIdea(idea);
+            Assert.fail("Should have thrown an exception.");
+        } catch (WishlistException e) {
+            Assert.assertEquals(e.getReason(), WishlistExceptionReason.IDEA_NOT_FOUND, "Reason should be idea not claimed.");
+            Assert.assertFalse(wishlist.containsIdea(idea));
+        } catch (Exception e) {
+            Assert.fail("Should have thrown a wishlist exception.");
+        }
+    }
+
+    @Test
     public void claimAfterUnclaimed() {
         Wishlist wishlist = create2ItemWishlist();
         String firstClaimer = randomId();
@@ -272,6 +342,15 @@ public class WishlistTest {
 
         Assert.assertTrue(rolledOver.contains(ideaClaimed), "Claimed item should now be in proposed list.");
         Assert.assertFalse(rolledOver.contains(ideaNotClaimed), "Unclaimed item should not be in proposed list.");
+    }
+
+    @Test
+    public void rolloverWhenNoneClaimed() {
+        Wishlist wishlist = create2ItemWishlist();
+        List<WishlistIdea> rolledOver = wishlist.rollover();
+
+        Assert.assertTrue(rolledOver.isEmpty());
+        Assert.assertEquals(wishlist.getList().size(), 2);
     }
 
     private Wishlist create2ItemWishlist() {
