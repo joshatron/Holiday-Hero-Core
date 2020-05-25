@@ -40,6 +40,28 @@ public class WishlistTest {
     }
 
     @Test
+    public void addDuplicateIdea() {
+        Wishlist wishlist = new Wishlist(randomId(), randomId());
+        WishlistIdea firstIdea = new WishlistIdea(randomId());
+        firstIdea.setName("Raspberry Pi");
+        WishlistIdea copiedIdea = new WishlistIdea(firstIdea.getId());
+        copiedIdea.setName("Arduino");
+
+        wishlist.addIdea(firstIdea);
+
+        try {
+            wishlist.addIdea(copiedIdea);
+            Assert.fail("Should have thrown an exception.");
+        } catch(WishlistException e) {
+            Assert.assertEquals(e.getReason(), WishlistExceptionReason.IDEA_ALREADY_ADDED, "Should have been proper exception type.");
+            Assert.assertEquals(wishlist.getList().size(), 1, "There should only be one item in the list.");
+            Assert.assertEquals(wishlist.getIdea(firstIdea.getId()), firstIdea, "The idea should be the first added.");
+        } catch(Exception e) {
+            Assert.fail("Should have thrown a wishlist exception.");
+        }
+    }
+
+    @Test
     public void removeGiftIdea() {
         Wishlist wishlist = create2ItemWishlist();
         WishlistIdea ideaToRemove = wishlist.getList().get(0);

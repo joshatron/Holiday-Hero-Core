@@ -26,6 +26,10 @@ public class Wishlist {
     }
 
     public void addIdea(WishlistIdea idea) {
+        if(containsIdea(idea.getId())) {
+            throw new WishlistException(WishlistExceptionReason.IDEA_ALREADY_ADDED);
+        }
+
         list.add(idea);
     }
 
