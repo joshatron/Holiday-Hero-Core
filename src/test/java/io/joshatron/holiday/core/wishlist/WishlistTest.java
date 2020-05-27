@@ -121,6 +121,57 @@ public class WishlistTest {
     }
 
     @Test
+    public void updateIdea() {
+        Wishlist wishlist = create2ItemWishlist();
+        WishlistIdea ideaToUpdate = wishlist.getList().get(0);
+        WishlistIdea updatedIdea = new WishlistIdea(ideaToUpdate.getId());
+        updatedIdea.setName("Bike");
+
+        wishlist.updateIdea(updatedIdea);
+        Assert.assertEquals(wishlist.getIdea(ideaToUpdate.getId()).getName(), updatedIdea.getName(), "Name should have changed.");
+    }
+
+    @Test
+    public void updateNonexistentIdea() {
+        Wishlist wishlist = create2ItemWishlist();
+        WishlistIdea ideaUpdate = new WishlistIdea(randomId());
+
+        try {
+            wishlist.updateIdea(ideaUpdate);
+            Assert.fail("Should have thrown an exception.");
+        } catch (WishlistException e) {
+            Assert.assertEquals(e.getReason(), WishlistExceptionReason.IDEA_NOT_FOUND);
+            Assert.assertFalse(wishlist.containsIdea(ideaUpdate.getId()));
+        } catch (Exception e) {
+            Assert.fail("Should have thrown a wishlist exception.");
+        }
+    }
+
+    @Test
+    public void updateDoesNotChangeClaim() {
+        Wishlist wishlist = create2ItemWishlist();
+        WishlistIdea ideaClaimed = wishlist.getList().get(0);
+        WishlistIdea ideaNotClaimed = wishlist.getList().get(1);
+        String claimer = randomId();
+        wishlist.claimIdea(claimer, ideaClaimed.getId());
+
+        WishlistIdea updateClaimed = new WishlistIdea(ideaClaimed.getId());
+        updateClaimed.setName("3D Printer");
+
+        WishlistIdea updateUnclaimed = new WishlistIdea(ideaNotClaimed.getId());
+        updateUnclaimed.setName("3D Printing Filament");
+        updateUnclaimed.setClaimer(randomId());
+
+        wishlist.updateIdea(updateClaimed);
+        wishlist.updateIdea(updateUnclaimed);
+
+        Assert.assertTrue(wishlist.getIdea(ideaClaimed.getId()).isClaimed());
+        Assert.assertEquals(wishlist.getIdea(ideaClaimed.getId()).getClaimer(), claimer);
+
+        Assert.assertFalse(wishlist.getIdea(ideaNotClaimed.getId()).isClaimed());
+    }
+
+    @Test
     public void markIdeaAsClaimed() {
         Wishlist wishlist = create2ItemWishlist();
         String claimer = randomId();

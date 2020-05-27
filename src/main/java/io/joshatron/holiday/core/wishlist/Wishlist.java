@@ -102,4 +102,16 @@ public class Wishlist {
 
         return rolledOver;
     }
+
+    public void updateIdea(WishlistIdea idea) {
+        for(int i = 0; i < list.size(); i++) {
+            if(list.get(i).getId().equals(idea.getId())) {
+                idea.setClaimer(list.get(i).getClaimer());
+                list.set(i, idea);
+                return;
+            }
+        }
+
+        throw new WishlistException(WishlistExceptionReason.IDEA_NOT_FOUND);
+    }
 }
