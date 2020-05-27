@@ -32,6 +32,20 @@ public class AuthorizedWishlistTest {
     }
 
     @Test
+    public void addIdeaSavesCopy() {
+        String owner = randomId();
+        Wishlist wishlist = new Wishlist(randomId(), owner);
+        AuthorizedWishlist authorizedWishlist = new AuthorizedWishlist(wishlist);
+
+        WishlistIdea idea = new WishlistIdea(randomId());
+        idea.setName("First Idea");
+        authorizedWishlist.addIdea(owner, idea);
+        idea.setName("Other Idea");
+
+        Assert.assertNotEquals(authorizedWishlist.getIdea(owner, idea.getId()), idea, "Should be different objects.");
+    }
+
+    @Test
     public void anyoneCanCheckIfListContainsIdea() {
         String owner = randomId();
         Wishlist wishlist = new Wishlist(randomId(), owner);
@@ -87,6 +101,51 @@ public class AuthorizedWishlistTest {
         firstGrabbed.setId(randomId());
 
         Assert.assertNotEquals(firstGrabbed, secondGrabbed, "Changing one shouldn't change other.");
+    }
+
+    @Test
+    public void onlyOwnerCanUpdateIdea() {
+        String owner = randomId();
+        Wishlist wishlist = new Wishlist(randomId(), owner);
+        AuthorizedWishlist authorizedList = new AuthorizedWishlist(wishlist);
+
+        WishlistIdea originalIdea = new WishlistIdea(randomId());
+        originalIdea.setName("First Idea");
+        authorizedList.addIdea(owner, originalIdea);
+
+        WishlistIdea updatedIdea = new WishlistIdea(originalIdea.getId());
+        updatedIdea.setName("Updated Idea");
+
+        try {
+            authorizedList.updateIdea(randomId(), updatedIdea);
+            Assert.fail("Should have thrown an exception.");
+        } catch (WishlistException e) {
+            Assert.assertEquals(e.getReason(), WishlistExceptionReason.USER_NOT_AUTHORIZED, "The reason should be user not authorized.");
+            Assert.assertEquals(authorizedList.getIdea(owner, originalIdea.getId()).getName(), originalIdea.getName(), "Idea should not be updated.");
+        } catch (Exception e) {
+            Assert.fail("Should have thrown a wishlist exception.");
+        }
+
+        authorizedList.updateIdea(owner, updatedIdea);
+        Assert.assertEquals(authorizedList.getIdea(owner, originalIdea.getId()).getName(), updatedIdea.getName(), "Idea should now be updated.");
+    }
+
+    @Test
+    public void updateIdeaShouldMakeCopy() {
+        String owner = randomId();
+        Wishlist wishlist = new Wishlist(randomId(), owner);
+        AuthorizedWishlist authorizedList = new AuthorizedWishlist(wishlist);
+
+        WishlistIdea originalIdea = new WishlistIdea(randomId());
+        originalIdea.setName("First Idea");
+        authorizedList.addIdea(owner, originalIdea);
+
+        WishlistIdea updatedIdea = new WishlistIdea(originalIdea.getId());
+        updatedIdea.setName("Updated Idea");
+        authorizedList.updateIdea(owner, updatedIdea);
+
+        updatedIdea.setName("Wrong Idea");
+        Assert.assertNotEquals(authorizedList.getIdea(owner, originalIdea.getId()).getName(), updatedIdea.getName(), "Idea shouldn't have updated.");
     }
 
     @Test
@@ -183,7 +242,7 @@ public class AuthorizedWishlistTest {
         }
 
         List<WishlistIdea> rolled = authorizedList.rollover(owner);
-        Assert.assertEquals(rolled.get(0), idea, "Rolled idea should be the idea.");
+        Assert.assertEquals(rolled.get(0).getId(), idea.getId(), "Rolled idea should be the idea.");
         Assert.assertFalse(authorizedList.containsIdea(randomId(), idea.getId()), "The idea should no longer be in the list.");
     }
 

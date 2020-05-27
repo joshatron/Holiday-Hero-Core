@@ -18,7 +18,7 @@ public class AuthorizedWishlist {
             throw new WishlistException(WishlistExceptionReason.USER_NOT_AUTHORIZED);
         }
 
-        wishlist.addIdea(idea);
+        wishlist.addIdea(new WishlistIdea(idea));
     }
 
     public boolean containsIdea(String user, String idea) {
@@ -81,5 +81,13 @@ public class AuthorizedWishlist {
         }
 
         return ideas;
+    }
+
+    public void updateIdea(String user, WishlistIdea idea) {
+        if(!wishlist.getOwner().equals(user)) {
+            throw new WishlistException(WishlistExceptionReason.USER_NOT_AUTHORIZED);
+        }
+
+        wishlist.updateIdea(new WishlistIdea(idea));
     }
 }
