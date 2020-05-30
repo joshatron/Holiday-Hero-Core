@@ -1,7 +1,7 @@
 package io.joshatron.holiday.core.wishlist;
 
-import io.joshatron.holiday.core.wishlist.exception.WishlistException;
-import io.joshatron.holiday.core.wishlist.exception.WishlistExceptionReason;
+import io.joshatron.holiday.core.exception.ListException;
+import io.joshatron.holiday.core.exception.ListExceptionReason;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -27,7 +27,7 @@ public class Wishlist {
 
     public void addIdea(WishlistIdea idea) {
         if(containsIdea(idea.getId())) {
-            throw new WishlistException(WishlistExceptionReason.IDEA_ALREADY_ADDED);
+            throw new ListException(ListExceptionReason.ITEM_ALREADY_ADDED);
         }
 
         list.add(idea);
@@ -47,15 +47,15 @@ public class Wishlist {
             return ideaOptional.get();
         }
 
-        throw new WishlistException(WishlistExceptionReason.IDEA_NOT_FOUND);
+        throw new ListException(ListExceptionReason.ITEM_NOT_FOUND);
     }
 
     public void removeIdea(String toRemove) {
         if(claimingStarted()) {
-            throw new WishlistException(WishlistExceptionReason.CLAIMING_STARTED);
+            throw new ListException(ListExceptionReason.CLAIMING_STARTED);
         }
         if(!containsIdea(toRemove)) {
-            throw new WishlistException(WishlistExceptionReason.IDEA_NOT_FOUND);
+            throw new ListException(ListExceptionReason.ITEM_NOT_FOUND);
         }
 
         list = list.stream()
@@ -70,13 +70,13 @@ public class Wishlist {
 
     public void claimIdea(String claimer, String ideaToClaim) {
         if(claimer.equals(owner)) {
-            throw new WishlistException(WishlistExceptionReason.CANT_CLAIM_OWN);
+            throw new ListException(ListExceptionReason.CANT_CLAIM_OWN);
         }
 
         WishlistIdea idea = getIdea(ideaToClaim);
 
         if(idea.isClaimed()) {
-            throw new WishlistException(WishlistExceptionReason.ALREADY_CLAIMED);
+            throw new ListException(ListExceptionReason.ALREADY_CLAIMED);
         }
 
         idea.setClaimer(claimer);
@@ -85,7 +85,7 @@ public class Wishlist {
     public void unclaimIdea(String idea) {
         WishlistIdea foundIdea = getIdea(idea);
         if(!foundIdea.isClaimed()) {
-            throw new WishlistException(WishlistExceptionReason.IDEA_NOT_CLAIMED);
+            throw new ListException(ListExceptionReason.ITEM_NOT_CLAIMED);
         }
 
         foundIdea.unclaim();
@@ -112,6 +112,6 @@ public class Wishlist {
             }
         }
 
-        throw new WishlistException(WishlistExceptionReason.IDEA_NOT_FOUND);
+        throw new ListException(ListExceptionReason.ITEM_NOT_FOUND);
     }
 }

@@ -1,5 +1,7 @@
 package io.joshatron.holiday.core.proposedlist;
 
+import io.joshatron.holiday.core.exception.ListException;
+import io.joshatron.holiday.core.exception.ListExceptionReason;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -22,6 +24,10 @@ public class ProposedList {
     }
 
     public void addIdea(ProposedIdea idea) {
+        if(containsIdea(idea.getId())) {
+            throw new ListException(ListExceptionReason.ITEM_ALREADY_ADDED);
+        }
+
         list.add(idea);
     }
 

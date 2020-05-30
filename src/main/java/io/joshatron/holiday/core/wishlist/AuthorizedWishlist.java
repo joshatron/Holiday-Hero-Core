@@ -1,7 +1,7 @@
 package io.joshatron.holiday.core.wishlist;
 
-import io.joshatron.holiday.core.wishlist.exception.WishlistException;
-import io.joshatron.holiday.core.wishlist.exception.WishlistExceptionReason;
+import io.joshatron.holiday.core.exception.ListException;
+import io.joshatron.holiday.core.exception.ListExceptionReason;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,7 +15,7 @@ public class AuthorizedWishlist {
 
     public void addIdea(String user, WishlistIdea idea) {
         if(!wishlist.getOwner().equals(user)) {
-            throw new WishlistException(WishlistExceptionReason.USER_NOT_AUTHORIZED);
+            throw new ListException(ListExceptionReason.USER_NOT_AUTHORIZED);
         }
 
         wishlist.addIdea(new WishlistIdea(idea));
@@ -37,7 +37,7 @@ public class AuthorizedWishlist {
 
     public void removeIdea(String user, String idea) {
         if(!wishlist.getOwner().equals(user)) {
-            throw new WishlistException(WishlistExceptionReason.USER_NOT_AUTHORIZED);
+            throw new ListException(ListExceptionReason.USER_NOT_AUTHORIZED);
         }
 
         wishlist.removeIdea(idea);
@@ -45,7 +45,7 @@ public class AuthorizedWishlist {
 
     public void claimIdea(String user, String idea) {
         if(wishlist.getOwner().equals(user)) {
-            throw new WishlistException(WishlistExceptionReason.USER_NOT_AUTHORIZED);
+            throw new ListException(ListExceptionReason.USER_NOT_AUTHORIZED);
         }
 
         wishlist.claimIdea(user, idea);
@@ -53,7 +53,7 @@ public class AuthorizedWishlist {
 
     public void unclaimIdea(String user, String idea) {
         if(!wishlist.getIdea(idea).getClaimer().equals(user)) {
-            throw new WishlistException(WishlistExceptionReason.USER_NOT_AUTHORIZED);
+            throw new ListException(ListExceptionReason.USER_NOT_AUTHORIZED);
         }
 
         wishlist.unclaimIdea(idea);
@@ -61,7 +61,7 @@ public class AuthorizedWishlist {
 
     public List<WishlistIdea> rollover(String user) {
         if(!wishlist.getOwner().equals(user)) {
-            throw new WishlistException(WishlistExceptionReason.USER_NOT_AUTHORIZED);
+            throw new ListException(ListExceptionReason.USER_NOT_AUTHORIZED);
         }
 
         return wishlist.rollover();
@@ -85,7 +85,7 @@ public class AuthorizedWishlist {
 
     public void updateIdea(String user, WishlistIdea idea) {
         if(!wishlist.getOwner().equals(user)) {
-            throw new WishlistException(WishlistExceptionReason.USER_NOT_AUTHORIZED);
+            throw new ListException(ListExceptionReason.USER_NOT_AUTHORIZED);
         }
 
         wishlist.updateIdea(new WishlistIdea(idea));

@@ -1,5 +1,7 @@
 package io.joshatron.holiday.core.proposedlist;
 
+import io.joshatron.holiday.core.exception.ListException;
+import io.joshatron.holiday.core.exception.ListExceptionReason;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -27,6 +29,24 @@ public class ProposedListTest {
         Assert.assertFalse(list.containsIdea(idea.getId()), "The idea should not be added yet.");
         list.addIdea(idea);
         Assert.assertTrue(list.containsIdea(idea.getId()), "The idea should now be added.");
+    }
+
+    @Test
+    public void addItemAgain() {
+        ProposedList list = new ProposedList(randomId(), randomId());
+        ProposedIdea idea = new ProposedIdea(randomId());
+
+        list.addIdea(idea);
+
+        try {
+            list.addIdea(idea);
+            Assert.fail("Should have thrown an exception.");
+        } catch (ListException e) {
+            Assert.assertEquals(e.getReason(), ListExceptionReason.ITEM_ALREADY_ADDED);
+            Assert.assertEquals(list.getList().size(), 1);
+        } catch (Exception e) {
+            Assert.fail("Should have thrown a list exception.");
+        }
     }
 
     @Test

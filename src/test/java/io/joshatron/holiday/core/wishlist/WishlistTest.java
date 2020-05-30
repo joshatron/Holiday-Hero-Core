@@ -1,7 +1,7 @@
 package io.joshatron.holiday.core.wishlist;
 
-import io.joshatron.holiday.core.wishlist.exception.WishlistException;
-import io.joshatron.holiday.core.wishlist.exception.WishlistExceptionReason;
+import io.joshatron.holiday.core.exception.ListException;
+import io.joshatron.holiday.core.exception.ListExceptionReason;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -52,12 +52,12 @@ public class WishlistTest {
         try {
             wishlist.addIdea(copiedIdea);
             Assert.fail("Should have thrown an exception.");
-        } catch(WishlistException e) {
-            Assert.assertEquals(e.getReason(), WishlistExceptionReason.IDEA_ALREADY_ADDED, "Should have been proper exception type.");
+        } catch(ListException e) {
+            Assert.assertEquals(e.getReason(), ListExceptionReason.ITEM_ALREADY_ADDED, "Should have been proper exception type.");
             Assert.assertEquals(wishlist.getList().size(), 1, "There should only be one item in the list.");
             Assert.assertEquals(wishlist.getIdea(firstIdea.getId()), firstIdea, "The idea should be the first added.");
         } catch(Exception e) {
-            Assert.fail("Should have thrown a wishlist exception.");
+            Assert.fail("Should have thrown a list exception.");
         }
     }
 
@@ -85,13 +85,13 @@ public class WishlistTest {
         try {
             wishlist.removeIdea(ideaToRemove.getId());
             Assert.fail("Should have thrown an exception.");
-        } catch (WishlistException e) {
-            Assert.assertEquals(e.getReason(), WishlistExceptionReason.IDEA_NOT_FOUND);
+        } catch (ListException e) {
+            Assert.assertEquals(e.getReason(), ListExceptionReason.ITEM_NOT_FOUND);
             Assert.assertEquals(wishlist.getList().size(), 1, "Should only have one item left in it.");
             Assert.assertFalse(wishlist.containsIdea(ideaToRemove.getId()), "Should not contain the removed item.");
             Assert.assertTrue(wishlist.containsIdea(ideaToKeep.getId()), "Should contain the kept item.");
         } catch (Exception e) {
-            Assert.fail("Should have thrown a wishlist exception.");
+            Assert.fail("Should have thrown a list exception.");
         }
     }
 
@@ -112,11 +112,11 @@ public class WishlistTest {
         try {
             wishlist.getIdea(ideaNotInList.getId());
             Assert.fail("Should have thrown exception since not in list.");
-        } catch (WishlistException e) {
-            Assert.assertEquals(e.getReason(), WishlistExceptionReason.IDEA_NOT_FOUND,
+        } catch (ListException e) {
+            Assert.assertEquals(e.getReason(), ListExceptionReason.ITEM_NOT_FOUND,
                     "The reason should be IDEA_NOT_FOUND.");
         } catch (Exception e) {
-            Assert.fail("Should have thrown a wishlist exception.");
+            Assert.fail("Should have thrown a list exception.");
         }
     }
 
@@ -139,11 +139,11 @@ public class WishlistTest {
         try {
             wishlist.updateIdea(ideaUpdate);
             Assert.fail("Should have thrown an exception.");
-        } catch (WishlistException e) {
-            Assert.assertEquals(e.getReason(), WishlistExceptionReason.IDEA_NOT_FOUND);
+        } catch (ListException e) {
+            Assert.assertEquals(e.getReason(), ListExceptionReason.ITEM_NOT_FOUND);
             Assert.assertFalse(wishlist.containsIdea(ideaUpdate.getId()));
         } catch (Exception e) {
-            Assert.fail("Should have thrown a wishlist exception.");
+            Assert.fail("Should have thrown a list exception.");
         }
     }
 
@@ -194,11 +194,11 @@ public class WishlistTest {
         try {
             wishlist.claimIdea(claimer, invalidIdea);
             Assert.fail("Should have thrown an exception.");
-        } catch (WishlistException e) {
-            Assert.assertEquals(e.getReason(), WishlistExceptionReason.IDEA_NOT_FOUND, "Reason should be idea not found.");
+        } catch (ListException e) {
+            Assert.assertEquals(e.getReason(), ListExceptionReason.ITEM_NOT_FOUND, "Reason should be idea not found.");
             Assert.assertFalse(wishlist.containsIdea(invalidIdea));
         } catch (Exception e) {
-            Assert.fail("Should have thrown a wishlist exception.");
+            Assert.fail("Should have thrown a list exception.");
         }
     }
 
@@ -224,13 +224,13 @@ public class WishlistTest {
         try {
             wishlist.claimIdea(secondClaimer, ideaToClaim.getId());
             Assert.fail("Should have thrown exception because reclaiming.");
-        } catch (WishlistException e) {
-            Assert.assertEquals(e.getReason(), WishlistExceptionReason.ALREADY_CLAIMED,
+        } catch (ListException e) {
+            Assert.assertEquals(e.getReason(), ListExceptionReason.ALREADY_CLAIMED,
                     "The reason should have been ALREADY_CLAIMED.");
             Assert.assertEquals(wishlist.getIdea(ideaToClaim.getId()).getClaimer(), firstClaimer,
                     "Should be claimed by firstClaimer still.");
         } catch (Exception e) {
-            Assert.fail("Should have been a wishlist exception");
+            Assert.fail("Should have been a list exception");
         }
     }
 
@@ -242,13 +242,13 @@ public class WishlistTest {
         try {
             wishlist.claimIdea(wishlist.getOwner(), ideaToClaim.getId());
             Assert.fail("Should have thrown an exception trying to claim.");
-        } catch (WishlistException e) {
-            Assert.assertEquals(e.getReason(), WishlistExceptionReason.CANT_CLAIM_OWN,
+        } catch (ListException e) {
+            Assert.assertEquals(e.getReason(), ListExceptionReason.CANT_CLAIM_OWN,
                     "The reason should have been CANT_CLAIM_OWN.");
             Assert.assertFalse(wishlist.getIdea(ideaToClaim.getId()).isClaimed(),
                     "The idea should not have been claimed.");
         } catch (Exception e) {
-            Assert.fail("Should have been a wishlist exception");
+            Assert.fail("Should have been a list exception");
         }
     }
 
@@ -262,13 +262,13 @@ public class WishlistTest {
         try {
             wishlist.claimIdea(wishlist.getOwner(), ideaToClaim.getId());
             Assert.fail("Should have thrown an exception trying to claim.");
-        } catch (WishlistException e) {
-            Assert.assertEquals(e.getReason(), WishlistExceptionReason.CANT_CLAIM_OWN,
+        } catch (ListException e) {
+            Assert.assertEquals(e.getReason(), ListExceptionReason.CANT_CLAIM_OWN,
                     "The reason should have been CANT_CLAIM_OWN.");
             Assert.assertEquals(wishlist.getIdea(ideaToClaim.getId()).getClaimer(), claimer,
                     "Should still be claimed by claimer.");
         } catch (Exception e) {
-            Assert.fail("Should have been a wishlist exception");
+            Assert.fail("Should have been a list exception");
         }
     }
 
@@ -282,11 +282,11 @@ public class WishlistTest {
         try {
             wishlist.removeIdea(ideaClaimed.getId());
             Assert.fail("Should have thrown exception removing item.");
-        } catch (WishlistException e) {
-            Assert.assertEquals(e.getReason(), WishlistExceptionReason.CLAIMING_STARTED, "Should be the proper reason.");
+        } catch (ListException e) {
+            Assert.assertEquals(e.getReason(), ListExceptionReason.CLAIMING_STARTED, "Should be the proper reason.");
             Assert.assertTrue(wishlist.containsIdea(ideaClaimed.getId()), "Should not have removed the idea.");
         } catch (Exception e) {
-            Assert.fail("Should only have thrown wishlist exception.");
+            Assert.fail("Should only have thrown list exception.");
         }
     }
 
@@ -301,8 +301,8 @@ public class WishlistTest {
         try {
             wishlist.removeIdea(ideaNotClaimed.getId());
             Assert.fail("Should have thrown exception removing item.");
-        } catch (WishlistException e) {
-            Assert.assertEquals(e.getReason(), WishlistExceptionReason.CLAIMING_STARTED);
+        } catch (ListException e) {
+            Assert.assertEquals(e.getReason(), ListExceptionReason.CLAIMING_STARTED);
             Assert.assertTrue(wishlist.containsIdea(ideaNotClaimed.getId()));
         } catch (Exception e) {
             Assert.fail("Should only have thrown PersonOperationException.");
@@ -341,11 +341,11 @@ public class WishlistTest {
         try {
             wishlist.unclaimIdea(idea.getId());
             Assert.fail("Should have thrown an exception.");
-        } catch (WishlistException e) {
-            Assert.assertEquals(e.getReason(), WishlistExceptionReason.IDEA_NOT_CLAIMED, "Reason should be idea not claimed.");
+        } catch (ListException e) {
+            Assert.assertEquals(e.getReason(), ListExceptionReason.ITEM_NOT_CLAIMED, "Reason should be idea not claimed.");
             Assert.assertFalse(wishlist.getIdea(idea.getId()).isClaimed(), "Should still not be claimed.");
         } catch (Exception e) {
-            Assert.fail("Should have thrown a wishlist exception.");
+            Assert.fail("Should have thrown a list exception.");
         }
     }
 
@@ -357,11 +357,11 @@ public class WishlistTest {
         try {
             wishlist.unclaimIdea(idea);
             Assert.fail("Should have thrown an exception.");
-        } catch (WishlistException e) {
-            Assert.assertEquals(e.getReason(), WishlistExceptionReason.IDEA_NOT_FOUND, "Reason should be idea not claimed.");
+        } catch (ListException e) {
+            Assert.assertEquals(e.getReason(), ListExceptionReason.ITEM_NOT_FOUND, "Reason should be idea not claimed.");
             Assert.assertFalse(wishlist.containsIdea(idea));
         } catch (Exception e) {
-            Assert.fail("Should have thrown a wishlist exception.");
+            Assert.fail("Should have thrown a list exception.");
         }
     }
 
