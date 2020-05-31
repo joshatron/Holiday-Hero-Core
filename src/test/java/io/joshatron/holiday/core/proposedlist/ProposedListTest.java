@@ -64,6 +64,26 @@ public class ProposedListTest {
         Assert.assertTrue(list.containsIdea(ideas.get(2).getId()), "Should contain third idea.");
     }
 
+    @Test
+    public void addItemsAgain() {
+        ProposedList list = new ProposedList(randomId(), randomId());
+        List<ProposedIdea> ideas = new ArrayList<>();
+        ideas.add(new ProposedIdea(randomId()));
+        ideas.add(new ProposedIdea(randomId()));
+        ideas.add(new ProposedIdea(randomId()));
+        list.addIdeas(ideas);
+
+        List<ProposedIdea> ideasWithCopy = new ArrayList<>();
+        ideasWithCopy.add(ideas.get(2));
+        ideasWithCopy.add(new ProposedIdea(randomId()));
+        ideasWithCopy.add(ideas.get(1));
+
+        list.addIdeas(ideasWithCopy);
+        Assert.assertTrue(list.containsIdea(ideasWithCopy.get(1).getId()), "Should added just the one noncopy.");
+        Assert.assertEquals(list.getList().size(), 4, "Should not have added the copies again..");
+
+    }
+
     private String randomId() {
         return UUID.randomUUID().toString();
     }

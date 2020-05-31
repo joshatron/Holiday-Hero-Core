@@ -37,6 +37,10 @@ public class ProposedList {
     }
 
     public void addIdeas(List<ProposedIdea> ideas) {
-        ideas.forEach(this::addIdea);
+        for(ProposedIdea idea : ideas) {
+            try {
+                addIdea(idea);
+            } catch (ListException ignore) {}
+        }
     }
 }
