@@ -8,6 +8,7 @@ import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @EqualsAndHashCode
@@ -15,7 +16,7 @@ import java.util.List;
 public class ProposedList {
     private final String id;
     private final String owner;
-    private final ArrayList<ProposedIdea> list;
+    private List<ProposedIdea> list;
 
     public ProposedList(String id, String owner) {
         this.id = id;
@@ -42,5 +43,28 @@ public class ProposedList {
                 addIdea(idea);
             } catch (ListException ignore) {}
         }
+    }
+
+    public ProposedIdea acceptIdea(String id) {
+        ProposedIdea idea = getIdea(id);
+        removeIdea(id);
+
+        return idea;
+    }
+
+    private ProposedIdea getIdea(String id) {
+        for(ProposedIdea idea : list) {
+            if(idea.getId().equals(id)) {
+                return idea;
+            }
+        }
+
+        return new ProposedIdea("");
+    }
+
+    private void removeIdea(String id) {
+        list = list.stream()
+                .filter(i -> !i.getId().equals(id))
+                .collect(Collectors.toList());
     }
 }

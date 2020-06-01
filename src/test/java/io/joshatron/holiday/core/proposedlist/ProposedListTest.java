@@ -80,8 +80,21 @@ public class ProposedListTest {
 
         list.addIdeas(ideasWithCopy);
         Assert.assertTrue(list.containsIdea(ideasWithCopy.get(1).getId()), "Should added just the one noncopy.");
-        Assert.assertEquals(list.getList().size(), 4, "Should not have added the copies again..");
+        Assert.assertEquals(list.getList().size(), 4, "Should not have added the copies again.");
+    }
 
+    @Test
+    public void acceptIdea() {
+        ProposedList list = new ProposedList(randomId(), randomId());
+        ProposedIdea ideaAccepted = new ProposedIdea(randomId());
+        ProposedIdea ideaIgnored = new ProposedIdea(randomId());
+        list.addIdea(ideaAccepted);
+        list.addIdea(ideaIgnored);
+
+        ProposedIdea ideaAcceptedBack = list.acceptIdea(ideaAccepted.getId());
+        Assert.assertEquals(ideaAcceptedBack, ideaAccepted);
+        Assert.assertTrue(list.containsIdea(ideaIgnored.getId()));
+        Assert.assertFalse(list.containsIdea(ideaAccepted.getId()));
     }
 
     private String randomId() {
