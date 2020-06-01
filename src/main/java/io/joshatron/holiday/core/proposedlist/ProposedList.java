@@ -59,7 +59,7 @@ public class ProposedList {
             }
         }
 
-        return new ProposedIdea("");
+        throw new ListException(ListExceptionReason.ITEM_NOT_FOUND);
     }
 
     private void removeIdea(String id) {

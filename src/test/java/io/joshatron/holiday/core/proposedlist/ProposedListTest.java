@@ -97,6 +97,24 @@ public class ProposedListTest {
         Assert.assertFalse(list.containsIdea(ideaAccepted.getId()));
     }
 
+    @Test
+    public void acceptNonPresentIdea() {
+        ProposedList list = new ProposedList(randomId(), randomId());
+        ProposedIdea idea = new ProposedIdea(randomId());
+        list.addIdea(idea);
+
+        try {
+            list.acceptIdea(randomId());
+            Assert.fail("Should have thrown an exception.");
+        } catch (ListException e) {
+            Assert.assertEquals(e.getReason(), ListExceptionReason.ITEM_NOT_FOUND);
+            Assert.assertTrue(list.containsIdea(idea.getId()));
+            Assert.assertEquals(list.getList().size(), 1);
+        } catch (Exception e) {
+            Assert.fail("Should have been a list exception.");
+        }
+    }
+
     private String randomId() {
         return UUID.randomUUID().toString();
     }
