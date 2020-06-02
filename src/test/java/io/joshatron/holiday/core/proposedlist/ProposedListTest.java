@@ -92,9 +92,9 @@ public class ProposedListTest {
         list.addIdea(ideaIgnored);
 
         ProposedIdea ideaAcceptedBack = list.acceptIdea(ideaAccepted.getId());
-        Assert.assertEquals(ideaAcceptedBack, ideaAccepted);
-        Assert.assertTrue(list.containsIdea(ideaIgnored.getId()));
-        Assert.assertFalse(list.containsIdea(ideaAccepted.getId()));
+        Assert.assertEquals(ideaAcceptedBack, ideaAccepted, "Idea returned should be the same as accepted.");
+        Assert.assertTrue(list.containsIdea(ideaIgnored.getId()), "Ignored idea should still be in list.");
+        Assert.assertFalse(list.containsIdea(ideaAccepted.getId()), "Accepted item should no longer be in list.");
     }
 
     @Test
@@ -107,9 +107,40 @@ public class ProposedListTest {
             list.acceptIdea(randomId());
             Assert.fail("Should have thrown an exception.");
         } catch (ListException e) {
-            Assert.assertEquals(e.getReason(), ListExceptionReason.ITEM_NOT_FOUND);
-            Assert.assertTrue(list.containsIdea(idea.getId()));
-            Assert.assertEquals(list.getList().size(), 1);
+            Assert.assertEquals(e.getReason(), ListExceptionReason.ITEM_NOT_FOUND, "Reason should be item not found.");
+            Assert.assertTrue(list.containsIdea(idea.getId()), "List should still have added item.");
+            Assert.assertEquals(list.getList().size(), 1, "List should still only have one item.");
+        } catch (Exception e) {
+            Assert.fail("Should have been a list exception.");
+        }
+    }
+    
+    @Test
+    public void denyIdea() {
+        ProposedList list = new ProposedList(randomId(), randomId());
+        ProposedIdea ideaDenied = new ProposedIdea(randomId());
+        ProposedIdea ideaIgnored = new ProposedIdea(randomId());
+        list.addIdea(ideaDenied);
+        list.addIdea(ideaIgnored);
+
+        list.denyIdea(ideaDenied.getId());
+        Assert.assertEquals(list.getList().size(), 1, "List should now only have one item.");
+        Assert.assertFalse(list.containsIdea(ideaDenied.getId()), "List should no longer have idea.");
+    }
+
+    @Test
+    public void denyNonPresentIdea() {
+        ProposedList list = new ProposedList(randomId(), randomId());
+        ProposedIdea idea = new ProposedIdea(randomId());
+        list.addIdea(idea);
+
+        try {
+            list.denyIdea(randomId());
+            Assert.fail("Should have thrown an exception.");
+        } catch (ListException e) {
+            Assert.assertEquals(e.getReason(), ListExceptionReason.ITEM_NOT_FOUND, "Reason should be item not found.");
+            Assert.assertTrue(list.containsIdea(idea.getId()), "List should still have added item.");
+            Assert.assertEquals(list.getList().size(), 1, "List should still only have one item.");
         } catch (Exception e) {
             Assert.fail("Should have been a list exception.");
         }

@@ -67,4 +67,12 @@ public class ProposedList {
                 .filter(i -> !i.getId().equals(id))
                 .collect(Collectors.toList());
     }
+
+    public void denyIdea(String id) {
+        if(!containsIdea(id)) {
+            throw new ListException(ListExceptionReason.ITEM_NOT_FOUND);
+        }
+
+        removeIdea(id);
+    }
 }
