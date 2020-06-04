@@ -52,7 +52,7 @@ public class ProposedList {
         return idea;
     }
 
-    private ProposedIdea getIdea(String id) {
+    public ProposedIdea getIdea(String id) {
         for(ProposedIdea idea : list) {
             if(idea.getId().equals(id)) {
                 return idea;

@@ -146,6 +146,30 @@ public class ProposedListTest {
         }
     }
 
+    @Test
+    public void getIdea() {
+        ProposedList list = new ProposedList(randomId(), randomId());
+        ProposedIdea idea = new ProposedIdea(randomId());
+        list.addIdea(idea);
+
+
+        Assert.assertEquals(list.getIdea(idea.getId()), idea, "Should have gotten idea back.");
+    }
+
+    @Test
+    public void getIdeaNotPresent() {
+        ProposedList list = new ProposedList(randomId(), randomId());
+
+        try {
+            list.getIdea(randomId());
+            Assert.fail("Should have thrown an exception.");
+        } catch (ListException e) {
+            Assert.assertEquals(e.getReason(), ListExceptionReason.ITEM_NOT_FOUND, "Reason should be item not found.");
+        } catch (Exception e) {
+            Assert.fail("Should have thrown a list exception.");
+        }
+    }
+
     private String randomId() {
         return UUID.randomUUID().toString();
     }
