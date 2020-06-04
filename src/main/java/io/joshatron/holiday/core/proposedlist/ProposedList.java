@@ -75,4 +75,15 @@ public class ProposedList {
 
         removeIdea(id);
     }
+
+    public void updateIdea(ProposedIdea updatedIdea) {
+        for(int i = 0; i < list.size(); i++) {
+            if(list.get(i).getId().equals(updatedIdea.getId())) {
+                list.set(i, updatedIdea);
+                return;
+            }
+        }
+
+        throw new ListException(ListExceptionReason.ITEM_NOT_FOUND);
+    }
 }

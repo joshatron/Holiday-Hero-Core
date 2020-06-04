@@ -170,6 +170,43 @@ public class ProposedListTest {
         }
     }
 
+    @Test
+    public void updateIdea() {
+        ProposedList list = new ProposedList(randomId(), randomId());
+        ProposedIdea ideaToUpdate = new ProposedIdea(randomId());
+        ideaToUpdate.setName("Raspberry Pi");
+        list.addIdea(ideaToUpdate);
+
+        ProposedIdea updatedIdea = new ProposedIdea(ideaToUpdate.getId());
+        updatedIdea.setName("Arduino");
+
+        Assert.assertNotEquals(list.getIdea(updatedIdea.getId()), updatedIdea, "Ideas should be different for now.");
+        list.updateIdea(updatedIdea);
+        Assert.assertEquals(list.getIdea(updatedIdea.getId()), updatedIdea, "Ideas should now be the same.");
+    }
+
+    @Test
+    public void updateIdeaNotPresent() {
+        ProposedList list = new ProposedList(randomId(), randomId());
+        ProposedIdea ideaNotUpdated = new ProposedIdea(randomId());
+        list.addIdea(ideaNotUpdated);
+
+        ProposedIdea updatedIdea = new ProposedIdea(randomId());
+        updatedIdea.setName("Raspberry Pi");
+
+        try {
+            list.updateIdea(updatedIdea);
+            Assert.fail("Should have thrown an exception.");
+        } catch (ListException e) {
+            Assert.assertEquals(e.getReason(), ListExceptionReason.ITEM_NOT_FOUND, "Reason should be idea not found.");
+            Assert.assertEquals(list.getList().size(), 1, "List should still only have one element.");
+            Assert.assertTrue(list.containsIdea(ideaNotUpdated.getId()), "Should still contain not updated idea.");
+            Assert.assertFalse(list.containsIdea(updatedIdea.getId()), "Should not contain idea update.");
+        } catch (Exception e) {
+            Assert.fail("Should have thrown a list exception.");
+        }
+    }
+
     private String randomId() {
         return UUID.randomUUID().toString();
     }
