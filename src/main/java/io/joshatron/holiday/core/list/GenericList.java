@@ -1,15 +1,20 @@
 package io.joshatron.holiday.core.list;
 
+import io.joshatron.holiday.core.exception.ListException;
+import io.joshatron.holiday.core.exception.ListExceptionReason;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class GenericList<G extends GenericItem> {
     private String id;
     private String owner;
+    private List<G> list;
     
     public GenericList(String id, String owner) {
         this.id = id;
         this.owner = owner;
+        this.list = new ArrayList<>();
     }
 
     public String getId() {
@@ -21,6 +26,19 @@ public class GenericList<G extends GenericItem> {
     }
 
     public List<G> getList() {
-        return new ArrayList<>();
+        return list;
+    }
+
+    public void addItem(G item) {
+        if(containsItem(item.getId())) {
+            throw new ListException(ListExceptionReason.ITEM_ALREADY_ADDED);
+        }
+
+        list.add(item);
+    }
+
+    public boolean containsItem(String item) {
+        return list.stream()
+                .anyMatch(i -> i.getId().equals(item));
     }
 }
