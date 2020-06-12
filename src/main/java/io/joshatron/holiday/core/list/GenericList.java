@@ -5,6 +5,9 @@ import io.joshatron.holiday.core.exception.ListExceptionReason;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class GenericList<G extends GenericItem> {
     private String id;
@@ -40,5 +43,27 @@ public class GenericList<G extends GenericItem> {
     public boolean containsItem(String item) {
         return list.stream()
                 .anyMatch(i -> i.getId().equals(item));
+    }
+
+    public G getItem(String item) {
+        Optional<G> found = list.stream()
+                .filter(i -> i.getId().equals(item))
+                .findFirst();
+
+        if(!found.isPresent()) {
+            throw new ListException(ListExceptionReason.ITEM_NOT_FOUND);
+        }
+
+        return found.get();
+    }
+
+    public void removeItem(String item) {
+        if(!containsItem(item)) {
+            throw new ListException(ListExceptionReason.ITEM_NOT_FOUND);
+        }
+
+        list = list.stream()
+                .filter(i -> !i.getId().equals(item))
+                .collect(Collectors.toList());
     }
 }

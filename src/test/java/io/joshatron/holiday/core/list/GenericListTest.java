@@ -49,6 +49,62 @@ public class GenericListTest {
         }
     }
 
+    @Test
+    public void getItem() {
+        GenericList<GenericItem> list = new GenericList<>(randomId(), randomId());
+        GenericItem first = new GenericItem(randomId());
+        GenericItem second = new GenericItem(randomId());
+        list.addItem(first);
+        list.addItem(second);
+
+        GenericItem item = list.getItem(second.getId());
+        Assert.assertEquals(item.getId(), second.getId(), "Should have grabbed second item.");
+    }
+
+    @Test
+    public void getItemNotExisting() {
+        GenericList<GenericItem> list = new GenericList<>(randomId(), randomId());
+
+        try {
+            list.getItem(randomId());
+            Assert.fail("Should have thrown exception.");
+        } catch (ListException e) {
+            Assert.assertEquals(e.getReason(), ListExceptionReason.ITEM_NOT_FOUND);
+        } catch (Exception e) {
+            Assert.fail("Should be list exception.");
+        }
+    }
+
+    @Test
+    public void removeItem() {
+        GenericList<GenericItem> list = new GenericList<>(randomId(), randomId());
+        GenericItem first = new GenericItem(randomId());
+        GenericItem second = new GenericItem(randomId());
+        list.addItem(first);
+        list.addItem(second);
+
+        list.removeItem(first.getId());
+        Assert.assertEquals(list.getList().size(), 1, "Should only have 1 item left.");
+        Assert.assertFalse(list.containsItem(first.getId()));
+    }
+
+    @Test
+    public void removeItemNotAdded() {
+        GenericList<GenericItem> list = new GenericList<>(randomId(), randomId());
+        GenericItem item = new GenericItem(randomId());
+        list.addItem(item);
+
+        try {
+            list.removeItem(randomId());
+            Assert.fail("Should have thrown an exception.");
+        } catch (ListException e) {
+            Assert.assertEquals(e.getReason(), ListExceptionReason.ITEM_NOT_FOUND);
+            Assert.assertEquals(list.getList().size(), 1);
+        } catch (Exception e) {
+            Assert.fail("Should have thrown a list exception.");
+        }
+    }
+
     private String randomId() {
         return UUID.randomUUID().toString();
     }
