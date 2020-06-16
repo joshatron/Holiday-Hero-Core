@@ -6,7 +6,6 @@ import io.joshatron.holiday.core.exception.ListExceptionReason;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class GenericList<G extends GenericItem> {
@@ -65,5 +64,18 @@ public class GenericList<G extends GenericItem> {
         list = list.stream()
                 .filter(i -> !i.getId().equals(item))
                 .collect(Collectors.toList());
+    }
+
+    public void updateItem(G replacement) {
+        if(!containsItem(replacement.getId())) {
+            throw new ListException(ListExceptionReason.ITEM_NOT_FOUND);
+        }
+
+        for(int i = 0; i < list.size(); i++) {
+            if(list.get(i).getId().equals(replacement.getId())) {
+                list.set(i, replacement);
+                return;
+            }
+        }
     }
 }

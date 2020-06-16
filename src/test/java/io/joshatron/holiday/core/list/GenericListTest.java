@@ -105,6 +105,34 @@ public class GenericListTest {
         }
     }
 
+    @Test
+    public void updateItem() {
+        GenericList<GenericItem> list = new GenericList<>(randomId(), randomId());
+        GenericItem item = new GenericItem(randomId());
+        item.setName("Original");
+        list.addItem(item);
+
+        GenericItem replacement = new GenericItem(item.getId());
+        replacement.setName("Replacement");
+        list.updateItem(replacement);
+        Assert.assertEquals(list.getItem(item.getId()).getName(), "Replacement");
+    }
+
+    @Test
+    public void updateIdeaNotPresent() {
+        GenericList<GenericItem> list = new GenericList<>(randomId(), randomId());
+
+        try {
+            list.updateItem(new GenericItem(randomId()));
+            Assert.fail("Should have thrown an exception.");
+        } catch (ListException e) {
+            Assert.assertEquals(e.getReason(), ListExceptionReason.ITEM_NOT_FOUND);
+            Assert.assertTrue(list.getList().isEmpty());
+        } catch (Exception e) {
+            Assert.fail("Should have thrown a list exception.");
+        }
+    }
+
     private String randomId() {
         return UUID.randomUUID().toString();
     }
