@@ -1,6 +1,5 @@
 package io.joshatron.holiday.core.list;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data

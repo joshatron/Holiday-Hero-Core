@@ -1,4 +1,4 @@
-package io.joshatron.holiday.core.wishlist;
+package io.joshatron.holiday.core.list.wishlist;
 
 import io.joshatron.holiday.core.exception.ListException;
 import io.joshatron.holiday.core.exception.ListExceptionReason;
@@ -16,16 +16,16 @@ public class AuthorizedWishlistTest {
         AuthorizedWishlist authorizedList = new AuthorizedWishlist(wishlist);
 
         WishlistIdea firstIdea = new WishlistIdea(randomId());
-        authorizedList.addIdea(owner, firstIdea);
-        Assert.assertTrue(authorizedList.containsIdea(owner, firstIdea.getId()), "Should have added idea.");
+        authorizedList.addItem(owner, firstIdea);
+        Assert.assertTrue(authorizedList.containsItem(owner, firstIdea.getId()), "Should have added idea.");
 
         WishlistIdea secondIdea = new WishlistIdea(randomId());
         try {
-            authorizedList.addIdea(randomId(), secondIdea);
+            authorizedList.addItem(randomId(), secondIdea);
             Assert.fail("Should have thrown exception.");
         } catch (ListException e) {
             Assert.assertEquals(e.getReason(), ListExceptionReason.USER_NOT_AUTHORIZED);
-            Assert.assertFalse(authorizedList.containsIdea(owner, secondIdea.getId()));
+            Assert.assertFalse(authorizedList.containsItem(owner, secondIdea.getId()));
         } catch (Exception e) {
             Assert.fail("Should have thrown a list exception.");
         }
@@ -39,10 +39,10 @@ public class AuthorizedWishlistTest {
 
         WishlistIdea idea = new WishlistIdea(randomId());
         idea.setName("First Idea");
-        authorizedWishlist.addIdea(owner, idea);
+        authorizedWishlist.addItem(owner, idea);
         idea.setName("Other Idea");
 
-        Assert.assertNotEquals(authorizedWishlist.getIdea(owner, idea.getId()), idea, "Should be different objects.");
+        Assert.assertNotEquals(authorizedWishlist.getItem(owner, idea.getId()), idea, "Should be different objects.");
     }
 
     @Test
@@ -52,10 +52,10 @@ public class AuthorizedWishlistTest {
         AuthorizedWishlist authorizedList = new AuthorizedWishlist(wishlist);
 
         WishlistIdea idea = new WishlistIdea(randomId());
-        authorizedList.addIdea(owner, idea);
+        authorizedList.addItem(owner, idea);
 
-        Assert.assertTrue(authorizedList.containsIdea(randomId(), idea.getId()), "Should say the idea is found.");
-        Assert.assertFalse(authorizedList.containsIdea(randomId(), randomId()), "Should not have found the idea.");
+        Assert.assertTrue(authorizedList.containsItem(randomId(), idea.getId()), "Should say the idea is found.");
+        Assert.assertFalse(authorizedList.containsItem(randomId(), randomId()), "Should not have found the idea.");
     }
 
     @Test
@@ -65,9 +65,9 @@ public class AuthorizedWishlistTest {
         AuthorizedWishlist authorizedList = new AuthorizedWishlist(wishlist);
 
         WishlistIdea idea = new WishlistIdea(randomId());
-        authorizedList.addIdea(owner, idea);
+        authorizedList.addItem(owner, idea);
 
-        Assert.assertEquals(authorizedList.getIdea(randomId(), idea.getId()), idea, "Should have found the idea.");
+        Assert.assertEquals(authorizedList.getItem(randomId(), idea.getId()), idea, "Should have found the idea.");
     }
 
     @Test
@@ -77,11 +77,11 @@ public class AuthorizedWishlistTest {
         AuthorizedWishlist authorizedList = new AuthorizedWishlist(wishlist);
 
         WishlistIdea idea = new WishlistIdea(randomId());
-        authorizedList.addIdea(owner, idea);
-        authorizedList.claimIdea(randomId(), idea.getId());
+        authorizedList.addItem(owner, idea);
+        authorizedList.claimItem(randomId(), idea.getId());
 
-        WishlistIdea returnedIdeaOwner = authorizedList.getIdea(owner, idea.getId());
-        WishlistIdea returnedIdeaRandom = authorizedList.getIdea(randomId(), idea.getId());
+        WishlistIdea returnedIdeaOwner = authorizedList.getItem(owner, idea.getId());
+        WishlistIdea returnedIdeaRandom = authorizedList.getItem(randomId(), idea.getId());
 
         Assert.assertFalse(returnedIdeaOwner.isClaimed(), "From owner perspective, should not be claimed.");
         Assert.assertTrue(returnedIdeaRandom.isClaimed(), "From other perspective, should be claimed.");
@@ -94,10 +94,10 @@ public class AuthorizedWishlistTest {
         AuthorizedWishlist authorizedList = new AuthorizedWishlist(wishlist);
 
         WishlistIdea idea = new WishlistIdea(randomId());
-        authorizedList.addIdea(owner, idea);
+        authorizedList.addItem(owner, idea);
 
-        WishlistIdea firstGrabbed = authorizedList.getIdea(randomId(), idea.getId());
-        WishlistIdea secondGrabbed = authorizedList.getIdea(randomId(), idea.getId());
+        WishlistIdea firstGrabbed = authorizedList.getItem(randomId(), idea.getId());
+        WishlistIdea secondGrabbed = authorizedList.getItem(randomId(), idea.getId());
         firstGrabbed.setId(randomId());
 
         Assert.assertNotEquals(firstGrabbed, secondGrabbed, "Changing one shouldn't change other.");
@@ -111,23 +111,23 @@ public class AuthorizedWishlistTest {
 
         WishlistIdea originalIdea = new WishlistIdea(randomId());
         originalIdea.setName("First Idea");
-        authorizedList.addIdea(owner, originalIdea);
+        authorizedList.addItem(owner, originalIdea);
 
         WishlistIdea updatedIdea = new WishlistIdea(originalIdea.getId());
         updatedIdea.setName("Updated Idea");
 
         try {
-            authorizedList.updateIdea(randomId(), updatedIdea);
+            authorizedList.updateItem(randomId(), updatedIdea);
             Assert.fail("Should have thrown an exception.");
         } catch (ListException e) {
             Assert.assertEquals(e.getReason(), ListExceptionReason.USER_NOT_AUTHORIZED, "The reason should be user not authorized.");
-            Assert.assertEquals(authorizedList.getIdea(owner, originalIdea.getId()).getName(), originalIdea.getName(), "Idea should not be updated.");
+            Assert.assertEquals(authorizedList.getItem(owner, originalIdea.getId()).getName(), originalIdea.getName(), "Idea should not be updated.");
         } catch (Exception e) {
             Assert.fail("Should have thrown a list exception.");
         }
 
-        authorizedList.updateIdea(owner, updatedIdea);
-        Assert.assertEquals(authorizedList.getIdea(owner, originalIdea.getId()).getName(), updatedIdea.getName(), "Idea should now be updated.");
+        authorizedList.updateItem(owner, updatedIdea);
+        Assert.assertEquals(authorizedList.getItem(owner, originalIdea.getId()).getName(), updatedIdea.getName(), "Idea should now be updated.");
     }
 
     @Test
@@ -138,14 +138,14 @@ public class AuthorizedWishlistTest {
 
         WishlistIdea originalIdea = new WishlistIdea(randomId());
         originalIdea.setName("First Idea");
-        authorizedList.addIdea(owner, originalIdea);
+        authorizedList.addItem(owner, originalIdea);
 
         WishlistIdea updatedIdea = new WishlistIdea(originalIdea.getId());
         updatedIdea.setName("Updated Idea");
-        authorizedList.updateIdea(owner, updatedIdea);
+        authorizedList.updateItem(owner, updatedIdea);
 
         updatedIdea.setName("Wrong Idea");
-        Assert.assertNotEquals(authorizedList.getIdea(owner, originalIdea.getId()).getName(), updatedIdea.getName(), "Idea shouldn't have updated.");
+        Assert.assertNotEquals(authorizedList.getItem(owner, originalIdea.getId()).getName(), updatedIdea.getName(), "Idea shouldn't have updated.");
     }
 
     @Test
@@ -155,20 +155,20 @@ public class AuthorizedWishlistTest {
         AuthorizedWishlist authorizedList = new AuthorizedWishlist(wishlist);
 
         WishlistIdea idea = new WishlistIdea(randomId());
-        authorizedList.addIdea(owner, idea);
+        authorizedList.addItem(owner, idea);
 
         try {
-            authorizedList.removeIdea(randomId(), idea.getId());
+            authorizedList.removeItem(randomId(), idea.getId());
             Assert.fail("Should have thrown an exception.");
         } catch (ListException e) {
             Assert.assertEquals(e.getReason(), ListExceptionReason.USER_NOT_AUTHORIZED, "The reason should be user not authorized.");
-            Assert.assertTrue(authorizedList.containsIdea(randomId(), idea.getId()), "Should not have removed the idea.");
+            Assert.assertTrue(authorizedList.containsItem(randomId(), idea.getId()), "Should not have removed the idea.");
         } catch (Exception e) {
             Assert.fail("Should have thrown a list exception.");
         }
 
-        authorizedList.removeIdea(owner, idea.getId());
-        Assert.assertFalse(authorizedList.containsIdea(owner, idea.getId()), "Idea should be removed.");
+        authorizedList.removeItem(owner, idea.getId());
+        Assert.assertFalse(authorizedList.containsItem(owner, idea.getId()), "Idea should be removed.");
     }
 
     @Test
@@ -178,20 +178,20 @@ public class AuthorizedWishlistTest {
         AuthorizedWishlist authorizedList = new AuthorizedWishlist(wishlist);
 
         WishlistIdea idea = new WishlistIdea(randomId());
-        authorizedList.addIdea(owner, idea);
+        authorizedList.addItem(owner, idea);
 
         try {
-            authorizedList.claimIdea(owner, idea.getId());
+            authorizedList.claimItem(owner, idea.getId());
             Assert.fail("Should have thrown an exception");
         } catch (ListException e) {
             Assert.assertEquals(e.getReason(), ListExceptionReason.USER_NOT_AUTHORIZED, "The reason should be user not authorized.");
         } catch (Exception e) {
             Assert.fail("Should have thrown a list exception.");
         }
-        Assert.assertFalse(authorizedList.getIdea(owner, idea.getId()).isClaimed(), "Idea should not be claimed yet.");
+        Assert.assertFalse(authorizedList.getItem(owner, idea.getId()).isClaimed(), "Idea should not be claimed yet.");
 
-        authorizedList.claimIdea(randomId(), idea.getId());
-        Assert.assertTrue(authorizedList.getIdea(randomId(), idea.getId()).isClaimed(), "Idea should be claimed now.");
+        authorizedList.claimItem(randomId(), idea.getId());
+        Assert.assertTrue(authorizedList.getItem(randomId(), idea.getId()).isClaimed(), "Idea should be claimed now.");
     }
 
     @Test
@@ -201,23 +201,23 @@ public class AuthorizedWishlistTest {
         AuthorizedWishlist authorizedList = new AuthorizedWishlist(wishlist);
 
         WishlistIdea idea = new WishlistIdea(randomId());
-        authorizedList.addIdea(owner, idea);
+        authorizedList.addItem(owner, idea);
 
         String claimer = randomId();
-        authorizedList.claimIdea(claimer, idea.getId());
+        authorizedList.claimItem(claimer, idea.getId());
 
         try {
-            authorizedList.unclaimIdea(randomId(), idea.getId());
+            authorizedList.unclaimItem(randomId(), idea.getId());
             Assert.fail("Should have thrown an exception.");
         } catch (ListException e) {
             Assert.assertEquals(e.getReason(), ListExceptionReason.USER_NOT_AUTHORIZED, "The reason should be user not authorized.");
-            Assert.assertTrue(authorizedList.getIdea(randomId(), idea.getId()).isClaimed(), "The idea should still be claimed.");
+            Assert.assertTrue(authorizedList.getItem(randomId(), idea.getId()).isClaimed(), "The idea should still be claimed.");
         } catch (Exception e) {
             Assert.fail("Should have thrown a list exception.");
         }
 
-        authorizedList.unclaimIdea(claimer, idea.getId());
-        Assert.assertFalse(authorizedList.getIdea(randomId(), idea.getId()).isClaimed(), "The idea should now be unclaimed.");
+        authorizedList.unclaimItem(claimer, idea.getId());
+        Assert.assertFalse(authorizedList.getItem(randomId(), idea.getId()).isClaimed(), "The idea should now be unclaimed.");
     }
 
     @Test
@@ -227,23 +227,23 @@ public class AuthorizedWishlistTest {
         AuthorizedWishlist authorizedList = new AuthorizedWishlist(wishlist);
 
         WishlistIdea idea = new WishlistIdea(randomId());
-        authorizedList.addIdea(owner, idea);
+        authorizedList.addItem(owner, idea);
 
-        authorizedList.claimIdea(randomId(), idea.getId());
+        authorizedList.claimItem(randomId(), idea.getId());
 
         try {
             authorizedList.rollover(randomId());
             Assert.fail("Should have thrown an exception.");
         } catch (ListException e) {
             Assert.assertEquals(e.getReason(), ListExceptionReason.USER_NOT_AUTHORIZED, "The reason should be user not authorized.");
-            Assert.assertTrue(authorizedList.containsIdea(randomId(), idea.getId()), "The idea should still be in list.");
+            Assert.assertTrue(authorizedList.containsItem(randomId(), idea.getId()), "The idea should still be in list.");
         } catch (Exception e) {
             Assert.fail("Should have thrown a list exception.");
         }
 
         List<WishlistIdea> rolled = authorizedList.rollover(owner);
         Assert.assertEquals(rolled.get(0).getId(), idea.getId(), "Rolled idea should be the idea.");
-        Assert.assertFalse(authorizedList.containsIdea(randomId(), idea.getId()), "The idea should no longer be in the list.");
+        Assert.assertFalse(authorizedList.containsItem(randomId(), idea.getId()), "The idea should no longer be in the list.");
     }
 
     @Test
@@ -262,9 +262,9 @@ public class AuthorizedWishlistTest {
         AuthorizedWishlist authorizedList = new AuthorizedWishlist(wishlist);
 
         WishlistIdea idea = new WishlistIdea(randomId());
-        authorizedList.addIdea(owner, idea);
+        authorizedList.addItem(owner, idea);
 
-        Assert.assertEquals(authorizedList.getIdeas(randomId()), wishlist.getList(), "The lists should be identical.");
+        Assert.assertEquals(authorizedList.getItems(randomId()), wishlist.getList(), "The lists should be identical.");
     }
 
     @Test
@@ -274,13 +274,13 @@ public class AuthorizedWishlistTest {
         AuthorizedWishlist authorizedList = new AuthorizedWishlist(wishlist);
 
         WishlistIdea idea = new WishlistIdea(randomId());
-        authorizedList.addIdea(owner, idea);
-        authorizedList.claimIdea(randomId(), idea.getId());
+        authorizedList.addItem(owner, idea);
+        authorizedList.claimItem(randomId(), idea.getId());
 
-        List<WishlistIdea> ideas = authorizedList.getIdeas(owner);
+        List<WishlistIdea> ideas = authorizedList.getItems(owner);
         Assert.assertFalse(ideas.get(0).isClaimed(), "The idea should not be claimed to the owner.");
 
-        ideas = authorizedList.getIdeas(randomId());
+        ideas = authorizedList.getItems(randomId());
         Assert.assertTrue(ideas.get(0).isClaimed(), "The idea should be claimed by a random user.");
     }
 
@@ -291,9 +291,9 @@ public class AuthorizedWishlistTest {
         AuthorizedWishlist authorizedList = new AuthorizedWishlist(wishlist);
 
         WishlistIdea idea = new WishlistIdea(randomId());
-        authorizedList.addIdea(owner, idea);
+        authorizedList.addItem(owner, idea);
 
-        List<WishlistIdea> ideas = authorizedList.getIdeas(randomId());
+        List<WishlistIdea> ideas = authorizedList.getItems(randomId());
         ideas.get(0).setId("NOT A REAL ID");
 
         Assert.assertNotEquals(ideas, wishlist.getList());

@@ -27,6 +27,10 @@ public class GenericList<G extends GenericItem> {
         return owner;
     }
 
+    public void setList(List<G> newList) {
+        this.list = newList;
+    }
+
     public List<G> getList() {
         return list;
     }

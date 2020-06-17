@@ -1,4 +1,4 @@
-package io.joshatron.holiday.core.wishlist;
+package io.joshatron.holiday.core.list.wishlist;
 
 import io.joshatron.holiday.core.exception.ListException;
 import io.joshatron.holiday.core.exception.ListExceptionReason;
@@ -13,20 +13,20 @@ public class AuthorizedWishlist {
         this.wishlist = wishlist;
     }
 
-    public void addIdea(String user, WishlistIdea idea) {
+    public void addItem(String user, WishlistIdea idea) {
         if(!wishlist.getOwner().equals(user)) {
             throw new ListException(ListExceptionReason.USER_NOT_AUTHORIZED);
         }
 
-        wishlist.addIdea(new WishlistIdea(idea));
+        wishlist.addItem(new WishlistIdea(idea));
     }
 
-    public boolean containsIdea(String user, String idea) {
-        return wishlist.containsIdea(idea);
+    public boolean containsItem(String user, String idea) {
+        return wishlist.containsItem(idea);
     }
 
-    public WishlistIdea getIdea(String user, String idea) {
-        WishlistIdea foundIdea = new WishlistIdea(wishlist.getIdea(idea));
+    public WishlistIdea getItem(String user, String idea) {
+        WishlistIdea foundIdea = new WishlistIdea(wishlist.getItem(idea));
 
         if(wishlist.getOwner().equals(user)) {
             foundIdea.unclaim();
@@ -35,28 +35,28 @@ public class AuthorizedWishlist {
         return foundIdea;
     }
 
-    public void removeIdea(String user, String idea) {
+    public void removeItem(String user, String idea) {
         if(!wishlist.getOwner().equals(user)) {
             throw new ListException(ListExceptionReason.USER_NOT_AUTHORIZED);
         }
 
-        wishlist.removeIdea(idea);
+        wishlist.removeItem(idea);
     }
 
-    public void claimIdea(String user, String idea) {
+    public void claimItem(String user, String idea) {
         if(wishlist.getOwner().equals(user)) {
             throw new ListException(ListExceptionReason.USER_NOT_AUTHORIZED);
         }
 
-        wishlist.claimIdea(user, idea);
+        wishlist.claimItem(user, idea);
     }
 
-    public void unclaimIdea(String user, String idea) {
-        if(!wishlist.getIdea(idea).getClaimer().equals(user)) {
+    public void unclaimItem(String user, String idea) {
+        if(!wishlist.getItem(idea).getClaimer().equals(user)) {
             throw new ListException(ListExceptionReason.USER_NOT_AUTHORIZED);
         }
 
-        wishlist.unclaimIdea(idea);
+        wishlist.unclaimItem(idea);
     }
 
     public List<WishlistIdea> rollover(String user) {
@@ -71,7 +71,7 @@ public class AuthorizedWishlist {
         return wishlist.getId();
     }
 
-    public List<WishlistIdea> getIdeas(String user) {
+    public List<WishlistIdea> getItems(String user) {
         List<WishlistIdea> ideas = wishlist.getList().stream()
                 .map(WishlistIdea::new)
                 .collect(Collectors.toList());
@@ -83,11 +83,11 @@ public class AuthorizedWishlist {
         return ideas;
     }
 
-    public void updateIdea(String user, WishlistIdea idea) {
+    public void updateItem(String user, WishlistIdea idea) {
         if(!wishlist.getOwner().equals(user)) {
             throw new ListException(ListExceptionReason.USER_NOT_AUTHORIZED);
         }
 
-        wishlist.updateIdea(new WishlistIdea(idea));
+        wishlist.updateItem(new WishlistIdea(idea));
     }
 }
