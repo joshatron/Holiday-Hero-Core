@@ -1,4 +1,4 @@
-package io.joshatron.holiday.core.list.wishlist;
+package io.joshatron.holiday.core.list.wish;
 
 import io.joshatron.holiday.core.exception.ListException;
 import io.joshatron.holiday.core.exception.ListExceptionReason;
@@ -8,18 +8,18 @@ import org.testng.annotations.Test;
 import java.util.List;
 import java.util.UUID;
 
-public class AuthorizedWishlistTest {
+public class AuthorizedWishListTest {
     @Test
     public void onlyOwnerCanAddIdea() {
         String owner = randomId();
-        Wishlist wishlist = new Wishlist(randomId(), owner);
-        AuthorizedWishlist authorizedList = new AuthorizedWishlist(wishlist);
+        WishList wishlist = new WishList(randomId(), owner);
+        AuthorizedWishList authorizedList = new AuthorizedWishList(wishlist);
 
-        WishlistIdea firstIdea = new WishlistIdea(randomId());
+        WishListIdea firstIdea = new WishListIdea(randomId());
         authorizedList.addItem(owner, firstIdea);
         Assert.assertTrue(authorizedList.containsItem(owner, firstIdea.getId()), "Should have added idea.");
 
-        WishlistIdea secondIdea = new WishlistIdea(randomId());
+        WishListIdea secondIdea = new WishListIdea(randomId());
         try {
             authorizedList.addItem(randomId(), secondIdea);
             Assert.fail("Should have thrown exception.");
@@ -34,10 +34,10 @@ public class AuthorizedWishlistTest {
     @Test
     public void addIdeaSavesCopy() {
         String owner = randomId();
-        Wishlist wishlist = new Wishlist(randomId(), owner);
-        AuthorizedWishlist authorizedWishlist = new AuthorizedWishlist(wishlist);
+        WishList wishlist = new WishList(randomId(), owner);
+        AuthorizedWishList authorizedWishlist = new AuthorizedWishList(wishlist);
 
-        WishlistIdea idea = new WishlistIdea(randomId());
+        WishListIdea idea = new WishListIdea(randomId());
         idea.setName("First Idea");
         authorizedWishlist.addItem(owner, idea);
         idea.setName("Other Idea");
@@ -48,10 +48,10 @@ public class AuthorizedWishlistTest {
     @Test
     public void anyoneCanCheckIfListContainsIdea() {
         String owner = randomId();
-        Wishlist wishlist = new Wishlist(randomId(), owner);
-        AuthorizedWishlist authorizedList = new AuthorizedWishlist(wishlist);
+        WishList wishlist = new WishList(randomId(), owner);
+        AuthorizedWishList authorizedList = new AuthorizedWishList(wishlist);
 
-        WishlistIdea idea = new WishlistIdea(randomId());
+        WishListIdea idea = new WishListIdea(randomId());
         authorizedList.addItem(owner, idea);
 
         Assert.assertTrue(authorizedList.containsItem(randomId(), idea.getId()), "Should say the idea is found.");
@@ -61,10 +61,10 @@ public class AuthorizedWishlistTest {
     @Test
     public void anyoneCanGetIdea() {
         String owner = randomId();
-        Wishlist wishlist = new Wishlist(randomId(), owner);
-        AuthorizedWishlist authorizedList = new AuthorizedWishlist(wishlist);
+        WishList wishlist = new WishList(randomId(), owner);
+        AuthorizedWishList authorizedList = new AuthorizedWishList(wishlist);
 
-        WishlistIdea idea = new WishlistIdea(randomId());
+        WishListIdea idea = new WishListIdea(randomId());
         authorizedList.addItem(owner, idea);
 
         Assert.assertEquals(authorizedList.getItem(randomId(), idea.getId()), idea, "Should have found the idea.");
@@ -73,15 +73,15 @@ public class AuthorizedWishlistTest {
     @Test
     public void ownerShouldntSeeClaimInfo() {
         String owner = randomId();
-        Wishlist wishlist = new Wishlist(randomId(), owner);
-        AuthorizedWishlist authorizedList = new AuthorizedWishlist(wishlist);
+        WishList wishlist = new WishList(randomId(), owner);
+        AuthorizedWishList authorizedList = new AuthorizedWishList(wishlist);
 
-        WishlistIdea idea = new WishlistIdea(randomId());
+        WishListIdea idea = new WishListIdea(randomId());
         authorizedList.addItem(owner, idea);
         authorizedList.claimItem(randomId(), idea.getId());
 
-        WishlistIdea returnedIdeaOwner = authorizedList.getItem(owner, idea.getId());
-        WishlistIdea returnedIdeaRandom = authorizedList.getItem(randomId(), idea.getId());
+        WishListIdea returnedIdeaOwner = authorizedList.getItem(owner, idea.getId());
+        WishListIdea returnedIdeaRandom = authorizedList.getItem(randomId(), idea.getId());
 
         Assert.assertFalse(returnedIdeaOwner.isClaimed(), "From owner perspective, should not be claimed.");
         Assert.assertTrue(returnedIdeaRandom.isClaimed(), "From other perspective, should be claimed.");
@@ -90,14 +90,14 @@ public class AuthorizedWishlistTest {
     @Test
     public void getIdeaShouldReturnACopy() {
         String owner = randomId();
-        Wishlist wishlist = new Wishlist(randomId(), owner);
-        AuthorizedWishlist authorizedList = new AuthorizedWishlist(wishlist);
+        WishList wishlist = new WishList(randomId(), owner);
+        AuthorizedWishList authorizedList = new AuthorizedWishList(wishlist);
 
-        WishlistIdea idea = new WishlistIdea(randomId());
+        WishListIdea idea = new WishListIdea(randomId());
         authorizedList.addItem(owner, idea);
 
-        WishlistIdea firstGrabbed = authorizedList.getItem(randomId(), idea.getId());
-        WishlistIdea secondGrabbed = authorizedList.getItem(randomId(), idea.getId());
+        WishListIdea firstGrabbed = authorizedList.getItem(randomId(), idea.getId());
+        WishListIdea secondGrabbed = authorizedList.getItem(randomId(), idea.getId());
         firstGrabbed.setId(randomId());
 
         Assert.assertNotEquals(firstGrabbed, secondGrabbed, "Changing one shouldn't change other.");
@@ -106,14 +106,14 @@ public class AuthorizedWishlistTest {
     @Test
     public void onlyOwnerCanUpdateIdea() {
         String owner = randomId();
-        Wishlist wishlist = new Wishlist(randomId(), owner);
-        AuthorizedWishlist authorizedList = new AuthorizedWishlist(wishlist);
+        WishList wishlist = new WishList(randomId(), owner);
+        AuthorizedWishList authorizedList = new AuthorizedWishList(wishlist);
 
-        WishlistIdea originalIdea = new WishlistIdea(randomId());
+        WishListIdea originalIdea = new WishListIdea(randomId());
         originalIdea.setName("First Idea");
         authorizedList.addItem(owner, originalIdea);
 
-        WishlistIdea updatedIdea = new WishlistIdea(originalIdea.getId());
+        WishListIdea updatedIdea = new WishListIdea(originalIdea.getId());
         updatedIdea.setName("Updated Idea");
 
         try {
@@ -133,14 +133,14 @@ public class AuthorizedWishlistTest {
     @Test
     public void updateIdeaShouldMakeCopy() {
         String owner = randomId();
-        Wishlist wishlist = new Wishlist(randomId(), owner);
-        AuthorizedWishlist authorizedList = new AuthorizedWishlist(wishlist);
+        WishList wishlist = new WishList(randomId(), owner);
+        AuthorizedWishList authorizedList = new AuthorizedWishList(wishlist);
 
-        WishlistIdea originalIdea = new WishlistIdea(randomId());
+        WishListIdea originalIdea = new WishListIdea(randomId());
         originalIdea.setName("First Idea");
         authorizedList.addItem(owner, originalIdea);
 
-        WishlistIdea updatedIdea = new WishlistIdea(originalIdea.getId());
+        WishListIdea updatedIdea = new WishListIdea(originalIdea.getId());
         updatedIdea.setName("Updated Idea");
         authorizedList.updateItem(owner, updatedIdea);
 
@@ -151,10 +151,10 @@ public class AuthorizedWishlistTest {
     @Test
     public void onlyOwnerCanRemoveIdea() {
         String owner = randomId();
-        Wishlist wishlist = new Wishlist(randomId(), owner);
-        AuthorizedWishlist authorizedList = new AuthorizedWishlist(wishlist);
+        WishList wishlist = new WishList(randomId(), owner);
+        AuthorizedWishList authorizedList = new AuthorizedWishList(wishlist);
 
-        WishlistIdea idea = new WishlistIdea(randomId());
+        WishListIdea idea = new WishListIdea(randomId());
         authorizedList.addItem(owner, idea);
 
         try {
@@ -174,10 +174,10 @@ public class AuthorizedWishlistTest {
     @Test
     public void anyoneButOwnerCanClaimIdea() {
         String owner = randomId();
-        Wishlist wishlist = new Wishlist(randomId(), owner);
-        AuthorizedWishlist authorizedList = new AuthorizedWishlist(wishlist);
+        WishList wishlist = new WishList(randomId(), owner);
+        AuthorizedWishList authorizedList = new AuthorizedWishList(wishlist);
 
-        WishlistIdea idea = new WishlistIdea(randomId());
+        WishListIdea idea = new WishListIdea(randomId());
         authorizedList.addItem(owner, idea);
 
         try {
@@ -197,10 +197,10 @@ public class AuthorizedWishlistTest {
     @Test
     public void onlyClaimerCanUnclaimIdea() {
         String owner = randomId();
-        Wishlist wishlist = new Wishlist(randomId(), owner);
-        AuthorizedWishlist authorizedList = new AuthorizedWishlist(wishlist);
+        WishList wishlist = new WishList(randomId(), owner);
+        AuthorizedWishList authorizedList = new AuthorizedWishList(wishlist);
 
-        WishlistIdea idea = new WishlistIdea(randomId());
+        WishListIdea idea = new WishListIdea(randomId());
         authorizedList.addItem(owner, idea);
 
         String claimer = randomId();
@@ -223,10 +223,10 @@ public class AuthorizedWishlistTest {
     @Test
     public void onlyOwnerCanRolloverList() {
         String owner = randomId();
-        Wishlist wishlist = new Wishlist(randomId(), owner);
-        AuthorizedWishlist authorizedList = new AuthorizedWishlist(wishlist);
+        WishList wishlist = new WishList(randomId(), owner);
+        AuthorizedWishList authorizedList = new AuthorizedWishList(wishlist);
 
-        WishlistIdea idea = new WishlistIdea(randomId());
+        WishListIdea idea = new WishListIdea(randomId());
         authorizedList.addItem(owner, idea);
 
         authorizedList.claimItem(randomId(), idea.getId());
@@ -241,7 +241,7 @@ public class AuthorizedWishlistTest {
             Assert.fail("Should have thrown a list exception.");
         }
 
-        List<WishlistIdea> rolled = authorizedList.rollover(owner);
+        List<WishListIdea> rolled = authorizedList.rollover(owner);
         Assert.assertEquals(rolled.get(0).getId(), idea.getId(), "Rolled idea should be the idea.");
         Assert.assertFalse(authorizedList.containsItem(randomId(), idea.getId()), "The idea should no longer be in the list.");
     }
@@ -249,8 +249,8 @@ public class AuthorizedWishlistTest {
     @Test
     public void anyoneCanGetListId() {
         String listId = randomId();
-        Wishlist wishlist = new Wishlist(listId, randomId());
-        AuthorizedWishlist authorizedList = new AuthorizedWishlist(wishlist);
+        WishList wishlist = new WishList(listId, randomId());
+        AuthorizedWishList authorizedList = new AuthorizedWishList(wishlist);
 
         Assert.assertEquals(authorizedList.getId(randomId()), listId, "The id returned should be correct.");
     }
@@ -258,10 +258,10 @@ public class AuthorizedWishlistTest {
     @Test
     public void anyoneCanGetFullList() {
         String owner = randomId();
-        Wishlist wishlist = new Wishlist(randomId(), owner);
-        AuthorizedWishlist authorizedList = new AuthorizedWishlist(wishlist);
+        WishList wishlist = new WishList(randomId(), owner);
+        AuthorizedWishList authorizedList = new AuthorizedWishList(wishlist);
 
-        WishlistIdea idea = new WishlistIdea(randomId());
+        WishListIdea idea = new WishListIdea(randomId());
         authorizedList.addItem(owner, idea);
 
         Assert.assertEquals(authorizedList.getItems(randomId()), wishlist.getList(), "The lists should be identical.");
@@ -270,14 +270,14 @@ public class AuthorizedWishlistTest {
     @Test
     public void whenOwnerGetsListThereAreNoClaims() {
         String owner = randomId();
-        Wishlist wishlist = new Wishlist(randomId(), owner);
-        AuthorizedWishlist authorizedList = new AuthorizedWishlist(wishlist);
+        WishList wishlist = new WishList(randomId(), owner);
+        AuthorizedWishList authorizedList = new AuthorizedWishList(wishlist);
 
-        WishlistIdea idea = new WishlistIdea(randomId());
+        WishListIdea idea = new WishListIdea(randomId());
         authorizedList.addItem(owner, idea);
         authorizedList.claimItem(randomId(), idea.getId());
 
-        List<WishlistIdea> ideas = authorizedList.getItems(owner);
+        List<WishListIdea> ideas = authorizedList.getItems(owner);
         Assert.assertFalse(ideas.get(0).isClaimed(), "The idea should not be claimed to the owner.");
 
         ideas = authorizedList.getItems(randomId());
@@ -287,13 +287,13 @@ public class AuthorizedWishlistTest {
     @Test
     public void getFullListReturnsCopiesOfIdeas() {
         String owner = randomId();
-        Wishlist wishlist = new Wishlist(randomId(), owner);
-        AuthorizedWishlist authorizedList = new AuthorizedWishlist(wishlist);
+        WishList wishlist = new WishList(randomId(), owner);
+        AuthorizedWishList authorizedList = new AuthorizedWishList(wishlist);
 
-        WishlistIdea idea = new WishlistIdea(randomId());
+        WishListIdea idea = new WishListIdea(randomId());
         authorizedList.addItem(owner, idea);
 
-        List<WishlistIdea> ideas = authorizedList.getItems(randomId());
+        List<WishListIdea> ideas = authorizedList.getItems(randomId());
         ideas.get(0).setId("NOT A REAL ID");
 
         Assert.assertNotEquals(ideas, wishlist.getList());

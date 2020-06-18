@@ -1,4 +1,4 @@
-package io.joshatron.holiday.core.list.wishlist;
+package io.joshatron.holiday.core.list.wish;
 
 import io.joshatron.holiday.core.list.GenericItem;
 import lombok.Data;
@@ -6,15 +6,15 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class WishlistIdea extends GenericItem {
+public class WishListIdea extends GenericItem {
     private String claimer;
 
-    public WishlistIdea(String id) {
+    public WishListIdea(String id) {
         super(id);
         this.claimer = "";
     }
 
-    public WishlistIdea(WishlistIdea other) {
+    public WishListIdea(WishListIdea other) {
         super(other.getId());
         setName(other.getName());
         setClaimer(other.getClaimer());

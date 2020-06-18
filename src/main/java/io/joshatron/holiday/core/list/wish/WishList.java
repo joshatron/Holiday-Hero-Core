@@ -1,4 +1,4 @@
-package io.joshatron.holiday.core.list.wishlist;
+package io.joshatron.holiday.core.list.wish;
 
 import io.joshatron.holiday.core.exception.ListException;
 import io.joshatron.holiday.core.exception.ListExceptionReason;
@@ -13,9 +13,9 @@ import java.util.stream.Collectors;
 @Getter
 @EqualsAndHashCode
 @ToString
-public class Wishlist extends GenericList<WishlistIdea> {
+public class WishList extends GenericList<WishListIdea> {
 
-    public Wishlist(String id, String owner) {
+    public WishList(String id, String owner) {
         super(id, owner);
     }
 
@@ -29,7 +29,7 @@ public class Wishlist extends GenericList<WishlistIdea> {
     }
 
     @Override
-    public void updateItem(WishlistIdea item) {
+    public void updateItem(WishListIdea item) {
         String originalClaimer = getItem(item.getId()).getClaimer();
         item.setClaimer(originalClaimer);
         super.updateItem(item);
@@ -37,7 +37,7 @@ public class Wishlist extends GenericList<WishlistIdea> {
 
     private boolean claimingStarted() {
         return getList().stream()
-                .anyMatch(WishlistIdea::isClaimed);
+                .anyMatch(WishListIdea::isClaimed);
     }
 
     public void claimItem(String claimer, String ideaToClaim) {
@@ -45,7 +45,7 @@ public class Wishlist extends GenericList<WishlistIdea> {
             throw new ListException(ListExceptionReason.CANT_CLAIM_OWN);
         }
 
-        WishlistIdea idea = getItem(ideaToClaim);
+        WishListIdea idea = getItem(ideaToClaim);
 
         if(idea.isClaimed()) {
             throw new ListException(ListExceptionReason.ALREADY_CLAIMED);
@@ -55,7 +55,7 @@ public class Wishlist extends GenericList<WishlistIdea> {
     }
 
     public void unclaimItem(String idea) {
-        WishlistIdea foundIdea = getItem(idea);
+        WishListIdea foundIdea = getItem(idea);
         if(!foundIdea.isClaimed()) {
             throw new ListException(ListExceptionReason.ITEM_NOT_CLAIMED);
         }
@@ -63,9 +63,9 @@ public class Wishlist extends GenericList<WishlistIdea> {
         foundIdea.unclaim();
     }
 
-    public List<WishlistIdea> rollover() {
-        List<WishlistIdea> rolledOver = getList().stream()
-                .filter(WishlistIdea::isClaimed)
+    public List<WishListIdea> rollover() {
+        List<WishListIdea> rolledOver = getList().stream()
+                .filter(WishListIdea::isClaimed)
                 .collect(Collectors.toList());
 
         setList(getList().stream()

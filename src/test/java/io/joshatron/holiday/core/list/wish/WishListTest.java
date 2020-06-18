@@ -1,4 +1,4 @@
-package io.joshatron.holiday.core.list.wishlist;
+package io.joshatron.holiday.core.list.wish;
 
 import io.joshatron.holiday.core.exception.ListException;
 import io.joshatron.holiday.core.exception.ListExceptionReason;
@@ -8,19 +8,19 @@ import org.testng.annotations.Test;
 import java.util.List;
 import java.util.UUID;
 
-public class WishlistTest {
+public class WishListTest {
     @Test
     public void updateDoesNotChangeClaim() {
-        Wishlist wishlist = create2ItemWishlist();
-        WishlistIdea ideaClaimed = wishlist.getList().get(0);
-        WishlistIdea ideaNotClaimed = wishlist.getList().get(1);
+        WishList wishlist = create2ItemWishlist();
+        WishListIdea ideaClaimed = wishlist.getList().get(0);
+        WishListIdea ideaNotClaimed = wishlist.getList().get(1);
         String claimer = randomId();
         wishlist.claimItem(claimer, ideaClaimed.getId());
 
-        WishlistIdea updateClaimed = new WishlistIdea(ideaClaimed.getId());
+        WishListIdea updateClaimed = new WishListIdea(ideaClaimed.getId());
         updateClaimed.setName("3D Printer");
 
-        WishlistIdea updateUnclaimed = new WishlistIdea(ideaNotClaimed.getId());
+        WishListIdea updateUnclaimed = new WishListIdea(ideaNotClaimed.getId());
         updateUnclaimed.setName("3D Printing Filament");
         updateUnclaimed.setClaimer(randomId());
 
@@ -35,10 +35,10 @@ public class WishlistTest {
 
     @Test
     public void markIdeaAsClaimed() {
-        Wishlist wishlist = create2ItemWishlist();
+        WishList wishlist = create2ItemWishlist();
         String claimer = randomId();
-        WishlistIdea ideaToClaim = wishlist.getList().get(1);
-        WishlistIdea ideaToNotClaim = wishlist.getList().get(0);
+        WishListIdea ideaToClaim = wishlist.getList().get(1);
+        WishListIdea ideaToNotClaim = wishlist.getList().get(0);
         wishlist.claimItem(claimer, ideaToClaim.getId());
 
         Assert.assertFalse(wishlist.getItem(ideaToNotClaim.getId()).isClaimed(),
@@ -49,7 +49,7 @@ public class WishlistTest {
 
     @Test
     public void claimIdeaThatDoesNotExist() {
-        Wishlist wishlist = create2ItemWishlist();
+        WishList wishlist = create2ItemWishlist();
         String claimer = randomId();
         String invalidIdea = randomId();
 
@@ -66,7 +66,7 @@ public class WishlistTest {
 
     @Test
     public void checkClaimer() {
-        Wishlist wishlist = create2ItemWishlist();
+        WishList wishlist = create2ItemWishlist();
         String claimer = randomId();
         String ideaToClaim = wishlist.getList().get(0).getId();
         wishlist.claimItem(claimer, ideaToClaim);
@@ -77,10 +77,10 @@ public class WishlistTest {
 
     @Test
     public void tryToClaimAlreadyClaimed() {
-        Wishlist wishlist = create2ItemWishlist();
+        WishList wishlist = create2ItemWishlist();
         String firstClaimer = randomId();
         String secondClaimer = randomId();
-        WishlistIdea ideaToClaim = wishlist.getList().get(1);
+        WishListIdea ideaToClaim = wishlist.getList().get(1);
         wishlist.claimItem(firstClaimer, ideaToClaim.getId());
 
         try {
@@ -98,8 +98,8 @@ public class WishlistTest {
 
     @Test
     public void tryToClaimOwn() {
-        Wishlist wishlist = create2ItemWishlist();
-        WishlistIdea ideaToClaim = wishlist.getList().get(1);
+        WishList wishlist = create2ItemWishlist();
+        WishListIdea ideaToClaim = wishlist.getList().get(1);
 
         try {
             wishlist.claimItem(wishlist.getOwner(), ideaToClaim.getId());
@@ -116,9 +116,9 @@ public class WishlistTest {
 
     @Test
     public void tryToClaimOwnAlreadyClaimed() {
-        Wishlist wishlist = create2ItemWishlist();
+        WishList wishlist = create2ItemWishlist();
         String claimer = randomId();
-        WishlistIdea ideaToClaim = wishlist.getList().get(0);
+        WishListIdea ideaToClaim = wishlist.getList().get(0);
         wishlist.claimItem(claimer, ideaToClaim.getId());
 
         try {
@@ -136,9 +136,9 @@ public class WishlistTest {
 
     @Test
     public void tryToRemoveItemAfterClaiming() {
-        Wishlist wishlist = create2ItemWishlist();
+        WishList wishlist = create2ItemWishlist();
         String claimer = randomId();
-        WishlistIdea ideaClaimed = wishlist.getList().get(0);
+        WishListIdea ideaClaimed = wishlist.getList().get(0);
         wishlist.claimItem(claimer, ideaClaimed.getId());
 
         try {
@@ -154,10 +154,10 @@ public class WishlistTest {
 
     @Test
     public void tryToRemoveOtherItemAfterClaiming() {
-        Wishlist wishlist = create2ItemWishlist();
+        WishList wishlist = create2ItemWishlist();
         String claimer = randomId();
-        WishlistIdea ideaClaimed = wishlist.getList().get(0);
-        WishlistIdea ideaNotClaimed = wishlist.getList().get(1);
+        WishListIdea ideaClaimed = wishlist.getList().get(0);
+        WishListIdea ideaNotClaimed = wishlist.getList().get(1);
         wishlist.claimItem(claimer, ideaClaimed.getId());
 
         try {
@@ -173,9 +173,9 @@ public class WishlistTest {
 
     @Test
     public void unclaimItem() {
-        Wishlist wishlist = create2ItemWishlist();
+        WishList wishlist = create2ItemWishlist();
         String claimer = randomId();
-        WishlistIdea ideaClaimed = wishlist.getList().get(1);
+        WishListIdea ideaClaimed = wishlist.getList().get(1);
         wishlist.claimItem(claimer, ideaClaimed.getId());
         wishlist.unclaimItem(ideaClaimed.getId());
 
@@ -184,8 +184,8 @@ public class WishlistTest {
 
     @Test
     public void unclaimUnclaimedIdea() {
-        Wishlist wishlist = create2ItemWishlist();
-        WishlistIdea idea = wishlist.getList().get(0);
+        WishList wishlist = create2ItemWishlist();
+        WishListIdea idea = wishlist.getList().get(0);
 
         try {
             wishlist.unclaimItem(idea.getId());
@@ -200,7 +200,7 @@ public class WishlistTest {
 
     @Test
     public void unclaimNonpresentIdea() {
-        Wishlist wishlist = create2ItemWishlist();
+        WishList wishlist = create2ItemWishlist();
         String idea = randomId();
 
         try {
@@ -216,10 +216,10 @@ public class WishlistTest {
 
     @Test
     public void claimAfterUnclaimed() {
-        Wishlist wishlist = create2ItemWishlist();
+        WishList wishlist = create2ItemWishlist();
         String firstClaimer = randomId();
         String secondClaimer = randomId();
-        WishlistIdea ideaClaimed = wishlist.getList().get(1);
+        WishListIdea ideaClaimed = wishlist.getList().get(1);
         wishlist.claimItem(firstClaimer, ideaClaimed.getId());
         wishlist.unclaimItem(ideaClaimed.getId());
         wishlist.claimItem(secondClaimer, ideaClaimed.getId());
@@ -230,12 +230,12 @@ public class WishlistTest {
 
     @Test
     public void rolloverWishlist() {
-        Wishlist wishlist = create2ItemWishlist();
+        WishList wishlist = create2ItemWishlist();
         String claimer = randomId();
-        WishlistIdea ideaClaimed = wishlist.getList().get(0);
-        WishlistIdea ideaNotClaimed = wishlist.getList().get(1);
+        WishListIdea ideaClaimed = wishlist.getList().get(0);
+        WishListIdea ideaNotClaimed = wishlist.getList().get(1);
         wishlist.claimItem(claimer, ideaClaimed.getId());
-        List<WishlistIdea> rolledOver = wishlist.rollover();
+        List<WishListIdea> rolledOver = wishlist.rollover();
 
         Assert.assertFalse(wishlist.containsItem(ideaClaimed.getId()), "Claimed item should no longer be in wishlist.");
         Assert.assertTrue(wishlist.containsItem(ideaNotClaimed.getId()), "Unclaimed item should stay in wishlist.");
@@ -246,20 +246,20 @@ public class WishlistTest {
 
     @Test
     public void rolloverWhenNoneClaimed() {
-        Wishlist wishlist = create2ItemWishlist();
-        List<WishlistIdea> rolledOver = wishlist.rollover();
+        WishList wishlist = create2ItemWishlist();
+        List<WishListIdea> rolledOver = wishlist.rollover();
 
         Assert.assertTrue(rolledOver.isEmpty());
         Assert.assertEquals(wishlist.getList().size(), 2);
     }
 
-    private Wishlist create2ItemWishlist() {
+    private WishList create2ItemWishlist() {
         String person = randomId();
-        Wishlist wishlist = new Wishlist(randomId(), person);
-        WishlistIdea idea1 = new WishlistIdea(randomId());
+        WishList wishlist = new WishList(randomId(), person);
+        WishListIdea idea1 = new WishListIdea(randomId());
         idea1.setName("Raspberry Pi");
         wishlist.addItem(idea1);
-        WishlistIdea idea2 = new WishlistIdea(randomId());
+        WishListIdea idea2 = new WishListIdea(randomId());
         idea2.setName("Arduino");
         wishlist.addItem(idea2);
 

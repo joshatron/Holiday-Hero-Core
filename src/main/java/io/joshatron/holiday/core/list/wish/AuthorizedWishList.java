@@ -1,4 +1,4 @@
-package io.joshatron.holiday.core.list.wishlist;
+package io.joshatron.holiday.core.list.wish;
 
 import io.joshatron.holiday.core.exception.ListException;
 import io.joshatron.holiday.core.exception.ListExceptionReason;
@@ -6,27 +6,27 @@ import io.joshatron.holiday.core.exception.ListExceptionReason;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class AuthorizedWishlist {
-    private Wishlist wishlist;
+public class AuthorizedWishList {
+    private WishList wishlist;
 
-    public AuthorizedWishlist(Wishlist wishlist) {
+    public AuthorizedWishList(WishList wishlist) {
         this.wishlist = wishlist;
     }
 
-    public void addItem(String user, WishlistIdea idea) {
+    public void addItem(String user, WishListIdea idea) {
         if(!wishlist.getOwner().equals(user)) {
             throw new ListException(ListExceptionReason.USER_NOT_AUTHORIZED);
         }
 
-        wishlist.addItem(new WishlistIdea(idea));
+        wishlist.addItem(new WishListIdea(idea));
     }
 
     public boolean containsItem(String user, String idea) {
         return wishlist.containsItem(idea);
     }
 
-    public WishlistIdea getItem(String user, String idea) {
-        WishlistIdea foundIdea = new WishlistIdea(wishlist.getItem(idea));
+    public WishListIdea getItem(String user, String idea) {
+        WishListIdea foundIdea = new WishListIdea(wishlist.getItem(idea));
 
         if(wishlist.getOwner().equals(user)) {
             foundIdea.unclaim();
@@ -59,7 +59,7 @@ public class AuthorizedWishlist {
         wishlist.unclaimItem(idea);
     }
 
-    public List<WishlistIdea> rollover(String user) {
+    public List<WishListIdea> rollover(String user) {
         if(!wishlist.getOwner().equals(user)) {
             throw new ListException(ListExceptionReason.USER_NOT_AUTHORIZED);
         }
@@ -71,23 +71,23 @@ public class AuthorizedWishlist {
         return wishlist.getId();
     }
 
-    public List<WishlistIdea> getItems(String user) {
-        List<WishlistIdea> ideas = wishlist.getList().stream()
-                .map(WishlistIdea::new)
+    public List<WishListIdea> getItems(String user) {
+        List<WishListIdea> ideas = wishlist.getList().stream()
+                .map(WishListIdea::new)
                 .collect(Collectors.toList());
 
         if(wishlist.getOwner().equals(user)) {
-            ideas.forEach(WishlistIdea::unclaim);
+            ideas.forEach(WishListIdea::unclaim);
         }
 
         return ideas;
     }
 
-    public void updateItem(String user, WishlistIdea idea) {
+    public void updateItem(String user, WishListIdea idea) {
         if(!wishlist.getOwner().equals(user)) {
             throw new ListException(ListExceptionReason.USER_NOT_AUTHORIZED);
         }
 
-        wishlist.updateItem(new WishlistIdea(idea));
+        wishlist.updateItem(new WishListIdea(idea));
     }
 }
