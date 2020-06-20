@@ -1,4 +1,4 @@
-package io.joshatron.holiday.core.receivedlist;
+package io.joshatron.holiday.core.list.received;
 
 import org.testng.annotations.Test;
 

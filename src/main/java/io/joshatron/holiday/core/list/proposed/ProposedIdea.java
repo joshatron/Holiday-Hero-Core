@@ -1,4 +1,4 @@
-package io.joshatron.holiday.core.proposedlist;
+package io.joshatron.holiday.core.list.proposed;
 
 import lombok.Data;
 
