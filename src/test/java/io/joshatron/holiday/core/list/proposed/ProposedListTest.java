@@ -2,8 +2,6 @@ package io.joshatron.holiday.core.list.proposed;
 
 import io.joshatron.holiday.core.exception.ListException;
 import io.joshatron.holiday.core.exception.ListExceptionReason;
-import io.joshatron.holiday.core.list.proposed.ProposedIdea;
-import io.joshatron.holiday.core.list.proposed.ProposedList;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

@@ -1,14 +1,13 @@
 package io.joshatron.holiday.core.list.proposed;
 
+import io.joshatron.holiday.core.list.GenericItem;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class ProposedIdea {
-    private String id;
-    private String name;
-
+public class ProposedIdea extends GenericItem {
     public ProposedIdea(String id) {
-        this.id = id;
-        this.name = "";
+        super(id);
     }
 }

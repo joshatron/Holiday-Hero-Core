@@ -2,6 +2,7 @@ package io.joshatron.holiday.core.list.proposed;
 
 import io.joshatron.holiday.core.exception.ListException;
 import io.joshatron.holiday.core.exception.ListExceptionReason;
+import io.joshatron.holiday.core.list.GenericList;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -13,14 +14,11 @@ import java.util.stream.Collectors;
 @Getter
 @EqualsAndHashCode
 @ToString
-public class ProposedList {
-    private final String id;
-    private final String owner;
+public class ProposedList extends GenericList<ProposedIdea> {
     private List<ProposedIdea> list;
 
     public ProposedList(String id, String owner) {
-        this.id = id;
-        this.owner = owner;
+        super(id, owner);
         this.list = new ArrayList<>();
     }
 
