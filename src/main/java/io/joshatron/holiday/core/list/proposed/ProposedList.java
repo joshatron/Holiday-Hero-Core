@@ -3,85 +3,34 @@ package io.joshatron.holiday.core.list.proposed;
 import io.joshatron.holiday.core.exception.ListException;
 import io.joshatron.holiday.core.exception.ListExceptionReason;
 import io.joshatron.holiday.core.list.GenericList;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-@Getter
-@EqualsAndHashCode
-@ToString
 public class ProposedList extends GenericList<ProposedIdea> {
-    private List<ProposedIdea> list;
-
     public ProposedList(String id, String owner) {
         super(id, owner);
-        this.list = new ArrayList<>();
     }
 
-    public void addIdea(ProposedIdea idea) {
-        if(containsIdea(idea.getId())) {
-            throw new ListException(ListExceptionReason.ITEM_ALREADY_ADDED);
-        }
-
-        list.add(idea);
-    }
-
-    public boolean containsIdea(String idea) {
-        return list.stream()
-                .anyMatch(i -> i.getId().equals(idea));
-    }
-
-    public void addIdeas(List<ProposedIdea> ideas) {
+    public void addItems(List<ProposedIdea> ideas) {
         for(ProposedIdea idea : ideas) {
             try {
-                addIdea(idea);
+                addItem(idea);
             } catch (ListException ignore) {}
         }
     }
 
-    public ProposedIdea acceptIdea(String id) {
-        ProposedIdea idea = getIdea(id);
-        removeIdea(id);
+    public ProposedIdea acceptItem(String id) {
+        ProposedIdea idea = getItem(id);
+        removeItem(id);
 
         return idea;
     }
 
-    public ProposedIdea getIdea(String id) {
-        for(ProposedIdea idea : list) {
-            if(idea.getId().equals(id)) {
-                return idea;
-            }
-        }
-
-        throw new ListException(ListExceptionReason.ITEM_NOT_FOUND);
-    }
-
-    private void removeIdea(String id) {
-        list = list.stream()
-                .filter(i -> !i.getId().equals(id))
-                .collect(Collectors.toList());
-    }
-
-    public void denyIdea(String id) {
-        if(!containsIdea(id)) {
+    public void denyItem(String id) {
+        if(!containsItem(id)) {
             throw new ListException(ListExceptionReason.ITEM_NOT_FOUND);
         }
 
-        removeIdea(id);
-    }
-
-    public void updateIdea(ProposedIdea updatedIdea) {
-        for(int i = 0; i < list.size(); i++) {
-            if(list.get(i).getId().equals(updatedIdea.getId())) {
-                list.set(i, updatedIdea);
-                return;
-            }
-        }
-
-        throw new ListException(ListExceptionReason.ITEM_NOT_FOUND);
+        removeItem(id);
     }
 }

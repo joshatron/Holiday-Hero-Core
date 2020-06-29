@@ -26,9 +26,9 @@ public class ProposedListTest {
         ProposedList list = new ProposedList(randomId(), randomId());
         ProposedIdea idea = new ProposedIdea(randomId());
 
-        Assert.assertFalse(list.containsIdea(idea.getId()), "The idea should not be added yet.");
-        list.addIdea(idea);
-        Assert.assertTrue(list.containsIdea(idea.getId()), "The idea should now be added.");
+        Assert.assertFalse(list.containsItem(idea.getId()), "The idea should not be added yet.");
+        list.addItem(idea);
+        Assert.assertTrue(list.containsItem(idea.getId()), "The idea should now be added.");
     }
 
     @Test
@@ -36,10 +36,10 @@ public class ProposedListTest {
         ProposedList list = new ProposedList(randomId(), randomId());
         ProposedIdea idea = new ProposedIdea(randomId());
 
-        list.addIdea(idea);
+        list.addItem(idea);
 
         try {
-            list.addIdea(idea);
+            list.addItem(idea);
             Assert.fail("Should have thrown an exception.");
         } catch (ListException e) {
             Assert.assertEquals(e.getReason(), ListExceptionReason.ITEM_ALREADY_ADDED);
@@ -56,12 +56,12 @@ public class ProposedListTest {
         ideas.add(new ProposedIdea(randomId()));
         ideas.add(new ProposedIdea(randomId()));
         ideas.add(new ProposedIdea(randomId()));
-        list.addIdeas(ideas);
+        list.addItems(ideas);
 
-        Assert.assertFalse(list.containsIdea(randomId()), "Should not contain random idea.");
-        Assert.assertTrue(list.containsIdea(ideas.get(0).getId()), "Should contain first idea.");
-        Assert.assertTrue(list.containsIdea(ideas.get(1).getId()), "Should contain second idea.");
-        Assert.assertTrue(list.containsIdea(ideas.get(2).getId()), "Should contain third idea.");
+        Assert.assertFalse(list.containsItem(randomId()), "Should not contain random idea.");
+        Assert.assertTrue(list.containsItem(ideas.get(0).getId()), "Should contain first idea.");
+        Assert.assertTrue(list.containsItem(ideas.get(1).getId()), "Should contain second idea.");
+        Assert.assertTrue(list.containsItem(ideas.get(2).getId()), "Should contain third idea.");
     }
 
     @Test
@@ -71,15 +71,15 @@ public class ProposedListTest {
         ideas.add(new ProposedIdea(randomId()));
         ideas.add(new ProposedIdea(randomId()));
         ideas.add(new ProposedIdea(randomId()));
-        list.addIdeas(ideas);
+        list.addItems(ideas);
 
         List<ProposedIdea> ideasWithCopy = new ArrayList<>();
         ideasWithCopy.add(ideas.get(2));
         ideasWithCopy.add(new ProposedIdea(randomId()));
         ideasWithCopy.add(ideas.get(1));
 
-        list.addIdeas(ideasWithCopy);
-        Assert.assertTrue(list.containsIdea(ideasWithCopy.get(1).getId()), "Should added just the one noncopy.");
+        list.addItems(ideasWithCopy);
+        Assert.assertTrue(list.containsItem(ideasWithCopy.get(1).getId()), "Should added just the one noncopy.");
         Assert.assertEquals(list.getList().size(), 4, "Should not have added the copies again.");
     }
 
@@ -88,27 +88,27 @@ public class ProposedListTest {
         ProposedList list = new ProposedList(randomId(), randomId());
         ProposedIdea ideaAccepted = new ProposedIdea(randomId());
         ProposedIdea ideaIgnored = new ProposedIdea(randomId());
-        list.addIdea(ideaAccepted);
-        list.addIdea(ideaIgnored);
+        list.addItem(ideaAccepted);
+        list.addItem(ideaIgnored);
 
-        ProposedIdea ideaAcceptedBack = list.acceptIdea(ideaAccepted.getId());
+        ProposedIdea ideaAcceptedBack = list.acceptItem(ideaAccepted.getId());
         Assert.assertEquals(ideaAcceptedBack, ideaAccepted, "Idea returned should be the same as accepted.");
-        Assert.assertTrue(list.containsIdea(ideaIgnored.getId()), "Ignored idea should still be in list.");
-        Assert.assertFalse(list.containsIdea(ideaAccepted.getId()), "Accepted item should no longer be in list.");
+        Assert.assertTrue(list.containsItem(ideaIgnored.getId()), "Ignored idea should still be in list.");
+        Assert.assertFalse(list.containsItem(ideaAccepted.getId()), "Accepted item should no longer be in list.");
     }
 
     @Test
     public void acceptNonPresentIdea() {
         ProposedList list = new ProposedList(randomId(), randomId());
         ProposedIdea idea = new ProposedIdea(randomId());
-        list.addIdea(idea);
+        list.addItem(idea);
 
         try {
-            list.acceptIdea(randomId());
+            list.acceptItem(randomId());
             Assert.fail("Should have thrown an exception.");
         } catch (ListException e) {
             Assert.assertEquals(e.getReason(), ListExceptionReason.ITEM_NOT_FOUND, "Reason should be item not found.");
-            Assert.assertTrue(list.containsIdea(idea.getId()), "List should still have added item.");
+            Assert.assertTrue(list.containsItem(idea.getId()), "List should still have added item.");
             Assert.assertEquals(list.getList().size(), 1, "List should still only have one item.");
         } catch (Exception e) {
             Assert.fail("Should have been a list exception.");
@@ -120,26 +120,26 @@ public class ProposedListTest {
         ProposedList list = new ProposedList(randomId(), randomId());
         ProposedIdea ideaDenied = new ProposedIdea(randomId());
         ProposedIdea ideaIgnored = new ProposedIdea(randomId());
-        list.addIdea(ideaDenied);
-        list.addIdea(ideaIgnored);
+        list.addItem(ideaDenied);
+        list.addItem(ideaIgnored);
 
-        list.denyIdea(ideaDenied.getId());
+        list.denyItem(ideaDenied.getId());
         Assert.assertEquals(list.getList().size(), 1, "List should now only have one item.");
-        Assert.assertFalse(list.containsIdea(ideaDenied.getId()), "List should no longer have idea.");
+        Assert.assertFalse(list.containsItem(ideaDenied.getId()), "List should no longer have idea.");
     }
 
     @Test
     public void denyNonPresentIdea() {
         ProposedList list = new ProposedList(randomId(), randomId());
         ProposedIdea idea = new ProposedIdea(randomId());
-        list.addIdea(idea);
+        list.addItem(idea);
 
         try {
-            list.denyIdea(randomId());
+            list.denyItem(randomId());
             Assert.fail("Should have thrown an exception.");
         } catch (ListException e) {
             Assert.assertEquals(e.getReason(), ListExceptionReason.ITEM_NOT_FOUND, "Reason should be item not found.");
-            Assert.assertTrue(list.containsIdea(idea.getId()), "List should still have added item.");
+            Assert.assertTrue(list.containsItem(idea.getId()), "List should still have added item.");
             Assert.assertEquals(list.getList().size(), 1, "List should still only have one item.");
         } catch (Exception e) {
             Assert.fail("Should have been a list exception.");
@@ -150,10 +150,10 @@ public class ProposedListTest {
     public void getIdea() {
         ProposedList list = new ProposedList(randomId(), randomId());
         ProposedIdea idea = new ProposedIdea(randomId());
-        list.addIdea(idea);
+        list.addItem(idea);
 
 
-        Assert.assertEquals(list.getIdea(idea.getId()), idea, "Should have gotten idea back.");
+        Assert.assertEquals(list.getItem(idea.getId()), idea, "Should have gotten idea back.");
     }
 
     @Test
@@ -161,7 +161,7 @@ public class ProposedListTest {
         ProposedList list = new ProposedList(randomId(), randomId());
 
         try {
-            list.getIdea(randomId());
+            list.getItem(randomId());
             Assert.fail("Should have thrown an exception.");
         } catch (ListException e) {
             Assert.assertEquals(e.getReason(), ListExceptionReason.ITEM_NOT_FOUND, "Reason should be item not found.");
@@ -175,33 +175,33 @@ public class ProposedListTest {
         ProposedList list = new ProposedList(randomId(), randomId());
         ProposedIdea ideaToUpdate = new ProposedIdea(randomId());
         ideaToUpdate.setName("Raspberry Pi");
-        list.addIdea(ideaToUpdate);
+        list.addItem(ideaToUpdate);
 
         ProposedIdea updatedIdea = new ProposedIdea(ideaToUpdate.getId());
         updatedIdea.setName("Arduino");
 
-        Assert.assertNotEquals(list.getIdea(updatedIdea.getId()), updatedIdea, "Ideas should be different for now.");
-        list.updateIdea(updatedIdea);
-        Assert.assertEquals(list.getIdea(updatedIdea.getId()), updatedIdea, "Ideas should now be the same.");
+        Assert.assertNotEquals(list.getItem(updatedIdea.getId()), updatedIdea, "Ideas should be different for now.");
+        list.updateItem(updatedIdea);
+        Assert.assertEquals(list.getItem(updatedIdea.getId()), updatedIdea, "Ideas should now be the same.");
     }
 
     @Test
     public void updateIdeaNotPresent() {
         ProposedList list = new ProposedList(randomId(), randomId());
         ProposedIdea ideaNotUpdated = new ProposedIdea(randomId());
-        list.addIdea(ideaNotUpdated);
+        list.addItem(ideaNotUpdated);
 
         ProposedIdea updatedIdea = new ProposedIdea(randomId());
         updatedIdea.setName("Raspberry Pi");
 
         try {
-            list.updateIdea(updatedIdea);
+            list.updateItem(updatedIdea);
             Assert.fail("Should have thrown an exception.");
         } catch (ListException e) {
             Assert.assertEquals(e.getReason(), ListExceptionReason.ITEM_NOT_FOUND, "Reason should be idea not found.");
             Assert.assertEquals(list.getList().size(), 1, "List should still only have one element.");
-            Assert.assertTrue(list.containsIdea(ideaNotUpdated.getId()), "Should still contain not updated idea.");
-            Assert.assertFalse(list.containsIdea(updatedIdea.getId()), "Should not contain idea update.");
+            Assert.assertTrue(list.containsItem(ideaNotUpdated.getId()), "Should still contain not updated idea.");
+            Assert.assertFalse(list.containsItem(updatedIdea.getId()), "Should not contain idea update.");
         } catch (Exception e) {
             Assert.fail("Should have thrown a list exception.");
         }
