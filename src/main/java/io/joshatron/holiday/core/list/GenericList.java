@@ -2,6 +2,7 @@ package io.joshatron.holiday.core.list;
 
 import io.joshatron.holiday.core.exception.ListException;
 import io.joshatron.holiday.core.exception.ListExceptionReason;
+import io.joshatron.holiday.core.list.proposed.ProposedIdea;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +42,14 @@ public class GenericList<G extends GenericItem> {
         }
 
         list.add(item);
+    }
+
+    public void addItems(List<G> items) {
+        for(G item : items) {
+            try {
+                addItem(item);
+            } catch (ListException ignore) {}
+        }
     }
 
     public boolean containsItem(String item) {

@@ -5,6 +5,8 @@ import io.joshatron.holiday.core.exception.ListExceptionReason;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class GenericListTest {
@@ -47,6 +49,36 @@ public class GenericListTest {
         } catch (Exception e) {
             Assert.fail("Should be list exception.");
         }
+    }
+
+    @Test
+    public void AddItems() {
+        GenericList<GenericItem> list = new GenericList<>(randomId(), randomId());
+        List<GenericItem> items = new ArrayList<>();
+        items.add(new GenericItem(randomId()));
+        items.add(new GenericItem(randomId()));
+        items.add(new GenericItem(randomId()));
+
+        list.addItems(items);
+
+        Assert.assertTrue(list.containsItem(items.get(0).getId()));
+        Assert.assertTrue(list.containsItem(items.get(1).getId()));
+        Assert.assertTrue(list.containsItem(items.get(2).getId()));
+    }
+
+    @Test
+    public void addItemsAddAllButIllegal() {
+        GenericList<GenericItem> list = new GenericList<>(randomId(), randomId());
+        List<GenericItem> items = new ArrayList<>();
+        items.add(new GenericItem(randomId()));
+        items.add(items.get(0));
+        items.add(new GenericItem(randomId()));
+
+        list.addItems(items);
+
+        Assert.assertEquals(list.getList().size(), 2);
+        Assert.assertTrue(list.containsItem(items.get(0).getId()));
+        Assert.assertTrue(list.containsItem(items.get(2).getId()));
     }
 
     @Test

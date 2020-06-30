@@ -4,19 +4,9 @@ import io.joshatron.holiday.core.exception.ListException;
 import io.joshatron.holiday.core.exception.ListExceptionReason;
 import io.joshatron.holiday.core.list.GenericList;
 
-import java.util.List;
-
 public class ProposedList extends GenericList<ProposedIdea> {
     public ProposedList(String id, String owner) {
         super(id, owner);
-    }
-
-    public void addItems(List<ProposedIdea> ideas) {
-        for(ProposedIdea idea : ideas) {
-            try {
-                addItem(idea);
-            } catch (ListException ignore) {}
-        }
     }
 
     public ProposedIdea acceptItem(String id) {
