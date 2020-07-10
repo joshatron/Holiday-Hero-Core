@@ -7,6 +7,8 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class ProposedIdea extends GenericItem {
+    private String giver;
+
     public ProposedIdea(String id) {
         super(id);
     }
